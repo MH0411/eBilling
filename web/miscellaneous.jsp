@@ -34,7 +34,7 @@
                         <h4>Miscellaneous Item</h4>
                         <div id="custom-search-input">
                             <div class="input-group ">
-                                <input type="text" class="  search-query form-control" placeholder="IC no" />
+                                <input type="text" class="  search-query form-control" placeholder="Item Name" />
                                 <span class="input-group-btn">
                                     <button id="search" class="btn btn-success pull-right" type="button">Search</button>
                                 </span>
@@ -45,7 +45,7 @@
                             <table class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
                                 <thead>
                                     <th>Item Code</th>
-                                    <th>Description</th>
+                                    <th>Name</th>
                                     <th>Buying Price (RM)</th>
                                     <th>Selling Price (RM)</th>
                                     <th></th>
@@ -63,7 +63,10 @@
                                         <td><%=data.get(i).get(2)%></td>
                                         <td><%=df.format(Double.parseDouble(data.get(i).get(3)))%></td>
                                         <td><%=df.format(Double.parseDouble(data.get(i).get(4)))%></td>
-                                        <td><button id="edit" class="btn btn-success pull-right" type="button">Edit</button></td>
+                                        <td>
+                                            <button id="delete" class="btn btn-success pull-right" type="button">Delete</button>
+                                            <button id="edit" class="btn btn-success pull-right" type="button">Edit</button>
+                                        </td>
                                     </tr>
                                     <%}}%>
                                 </tbody>

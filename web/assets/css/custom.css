@@ -204,3 +204,8 @@ and open the template in the editor.
   -moz-border-radius: 3px 0 0 3px;
   border-radius: 3px 0 0 3px;
 }
+
+#delete {
+    margin-left: 10px;
+    background-color: #EE5E68;
+}
