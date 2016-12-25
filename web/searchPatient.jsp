@@ -38,7 +38,6 @@
             <td><%=data.get(i).get(6)%></td>
             <td><%=data.get(i).get(7)%></td>
             <td><%=data.get(i).get(8)%></td>
-            <td><%=data.get(i).get(9)%></td>
             <td><a href="#" class="btn btn-success pull-right">Generate Bill</a></td>
         </tr>   
         <%}}%>
