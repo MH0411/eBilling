@@ -92,7 +92,7 @@
                             + "SELECT ch.order_no FROM far_customer_hdr ch "
                             + "WHERE ch.order_no = pom.order_no) "
                             + "GROUP BY pom.order_no";                        
-                    $.get("searchPatient.jsp",{ic:date, query:query},function(data){
+                    $.get("searchPatient.jsp",{query:query},function(data){
                      $("#patientInfo").html(data);
                     });
                 });

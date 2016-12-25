@@ -8,7 +8,6 @@
 <%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
-   String ic = request.getParameter("ic");
    String query = request.getParameter("query");
    ArrayList<ArrayList<String>> data = Conn.getData(query);
 %>
