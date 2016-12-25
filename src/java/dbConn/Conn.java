@@ -18,69 +18,14 @@ import main.RMIConnector;
  * @author Mike Ho
  */
 public class Conn {
-
-    public static String HOST = "10.73.32.200";
-    public static int PORT = 1099;
-    public final static String STR_HOST = "HOST";
-    public final static String STR_PORT = "PORT";
-    public final static String STR_ERROR = "ERROR";
     
-    public Conn() {
-        String host_server = Conn.getIpCall().getProperty(Conn.STR_HOST);
-        int host_port = 1099;
-        try {
-            host_port = Integer.parseInt(Conn.getIpCall().getProperty(Conn.STR_PORT));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Conn.HOST = host_server;
-        Conn.PORT = host_port;
-    }
-    
-    public static Properties getIpCall()
-    {
-        String in = Config.FILE_URL + "ipcall";
-        BufferedReader br;
-        Properties prop = new Properties();
-        try {
-            String sCurrentLine = "";
-            br = new BufferedReader(new FileReader(in));
-            while ((sCurrentLine = br.readLine()) != null) {
-                char firstLetter = sCurrentLine.charAt(0);
-                if (firstLetter != '#') {
-                    String linePecah[] = sCurrentLine.split(":");
-                    try {
-                        if (linePecah[0] == "hostserver" || linePecah[0].equals("hostserver")) {
-                            Conn.HOST = linePecah[1];
-                            prop.setProperty(Conn.STR_HOST, linePecah[1]);
-                        } else if (linePecah[0] == "hostport" || linePecah[0].equals("hostport")) {
-                            Conn.PORT = Integer.parseInt(linePecah[1]);
-                            prop.setProperty(Conn.STR_PORT, linePecah[1]);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            prop.setProperty(Conn.STR_ERROR, ex.getMessage());
-        }
-        return prop;
-    }
+    public final static String HOST = "10.73.32.200";
+    public final static int PORT = 1099;
     
     public static ArrayList<ArrayList<String>> getData(String query) 
     {
         RMIConnector rmic = new RMIConnector();
-
-//        String host_db = Config.url_server;
-        String host_server = Conn.getIpCall().getProperty(Conn.STR_HOST);
-        int host_port = 1099;
-        try {
-            host_port = Integer.parseInt(Conn.getIpCall().getProperty(Conn.STR_PORT));
-        } catch (Exception e) {
-        }
-        
-        ArrayList<ArrayList<String>> data = rmic.getQuerySQL(host_server, host_port, query);
+        ArrayList<ArrayList<String>> data = rmic.getQuerySQL(Conn.HOST, Conn.PORT, query);
         
         return data;
     }

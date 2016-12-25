@@ -4,6 +4,8 @@
     Author     : Mike Ho
 --%>
 
+<%@page import="java.util.ArrayList"%>
+<%@page import="dbConn.Conn"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -28,48 +30,73 @@
                 <!--body-->
                 <div class="col-lg-10">
                     <div class="thumbnail">
-                        <h4>Patiant Information</h4>
-                        <form class="" >
-                            <div id="custom-search-input">
-                                <div class="input-group ">
-                                    <input type="text" class="  search-query form-control" placeholder="Patient's IC no" />
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-success pull-right" type="button">Search</button>
-                                    </span>
-                                </div>
+                        <h4>Patient Information</h4>
+                        <div id="custom-search-input">
+                            <div class="input-group ">
+                                <input type="text" class="  search-query form-control" placeholder="IC no" />
+                                <span class="input-group-btn">
+                                    <button id="search" class="btn btn-success pull-right" type="button">Search</button>
+                                </span>
                             </div>
-                        </form>
+                        </div>
                         
-                        <table class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
-                            <thead>
-                                <th>Episode Date</th>
-                                <th>Order No</th>
-                                <th>PMI No.</th>
-                                <th>IC No.</th>
-                                <th>Other ID</th>
-                                <th>Name</th>
-                                <th>Address</th>
-                                <th>Phone No.</th>
-                                <th></th>
-                            </thead>
-                            <tbody>
-                                <tr data-status="pagado">
-                                    <td>yyyy/mm/dd</td>
-                                    <td>01</td>
-                                    <td>10</td>
-                                    <td>123456-01-9876</td>
-                                    <td>id</td>
-                                    <td>name fill</td>
-                                    <td>address</td>
-                                    <td>99999999</td>
-                                    <td><a href="#" class="btn btn-success pull-right">Generate Bill</a></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div id="patientInfo">
+                            <table class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
+                                <thead>
+                                    <th>Episode Date</th>
+                                    <th>Order No</th>
+                                    <th>PMI No.</th>
+                                    <th>IC No.</th>
+                                    <th>Other ID</th>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Phone No.</th>
+                                    <th></th>
+                                </thead>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+            
+        <!--js-->
+        <script src="assets/js/dateformat.js" type="text/javascript"></script>
+        <script src="assets/js/jquery.min.js" type="text/javascript"></script>
         <script src="assets/js/custom.js" type="text/javascript"></script>
+        <script>
+            $(document).ready(function(){
+                 $("#search").click(function(){
+                    var dateFormat = require('dateformat');
+                    var now = new Date();
+                    var date = dateFormat(now, "yyyy-mm-dd");
+                    var ic = $(this).val();
+                    var query = 
+                        "SELECT distinct "
+                            + "pe.episode_date, pom.order_no, pe.pmi_no, pb.new_ic_no, pb.id_no, "
+                            + "pb.patient_name, pb.home_address, "
+                            + "pb.mobile_phone "
+                            + "FROM pms_episode pe "
+                            + "INNER JOIN pis_order_master pom "
+                            + "ON pe.pmi_no = pom.pmi_no "
+                            + "INNER JOIN ehr_central ec "
+                            + "ON pe.pmi_no = ec.pmi_no "
+                            + "INNER JOIN pms_patient_biodata pb "
+                            + "ON ec.pmi_no = pb.pmi_no "
+                            + "WHERE (ec.status = 1 OR ec.status = 3) "
+                            + "AND pe.status ='Discharge' "
+                            + "AND pom.episode_code like '"+ date +" %' " 
+                            + "AND pe.episode_date like '"+ date +" %' "
+                            + "AND pb.new_ic_no = '"+ ic +"' "
+                            + "AND NOT EXISTS ("
+                            + "SELECT ch.order_no FROM far_customer_hdr ch "
+                            + "WHERE ch.order_no = pom.order_no) "
+                            + "GROUP BY pom.order_no";                        
+                    $.get("searchPatient.jsp",{ic:date, query:query},function(data){
+                     $("#patientInfo").html(data);
+                    });
+                });
+            });
+        </script>
     </body>
 </html>

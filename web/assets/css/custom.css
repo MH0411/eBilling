@@ -7,9 +7,10 @@ and open the template in the editor.
     Created on : Dec 24, 2016, 3:14:59 PM
     Author     : Mike Ho
 */
+
 @import url(http://fonts.googleapis.com/css?family=Oxygen+Mono);
 /* Please Keep this font import at the very top of any CSS file */
-@charset "UTF-8"
+@charset "UTF-8";
 /* Starter CSS for Flyout Menu */
 #cssmenu {
   padding: 0;
