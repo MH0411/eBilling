@@ -33,7 +33,7 @@
                         <h4>Patient Information</h4>
                         <div id="custom-search-input">
                             <div class="input-group ">
-                                <input type="text" class="  search-query form-control" placeholder="IC no" />
+                                <input type="text" class="  search-query form-control" placeholder="IC No." />
                                 <span class="input-group-btn">
                                     <button id="search" class="btn btn-success pull-right" type="button">Search</button>
                                 </span>
@@ -44,7 +44,7 @@
                             <table class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
                                 <thead>
                                     <th>Episode Date</th>
-                                    <th>Order No</th>
+                                    <th>Order No.</th>
                                     <th>PMI No.</th>
                                     <th>IC No.</th>
                                     <th>Other ID</th>
