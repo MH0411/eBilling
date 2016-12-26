@@ -32,41 +32,77 @@
                 <div class="col-lg-10">
                     <div class="thumbnail">
                         <h4>Miscellaneous Item</h4>
+                        <div style="margin-bottom: 250px">
+                            <form>
+                                <div class="form-group">
+                                    <%
+                                        String query1 = 
+                                                "SELECT item_code "
+                                                + "FROM far_miscellaneous_item "
+                                                + "WHERE item_code =(SELECT MAX(item_code) FROM far_miscellaneous_item)";
+                                        ArrayList<ArrayList<String>> data1 = Conn.getData(query1);
+                                        String itemCode = data1.get(0).get(0);
+                                        itemCode = itemCode.replaceAll("[^0-9]", "");
+                                        String code = "RG";
+                                        for (int i = 0 ; i < 4 ; i++){
+                                            code = code + "0";
+                                        }
+                                        code = code + (Integer.parseInt(itemCode)+1);
+                                    %>
+                                    <label class="col-lg-2">Item Code</label>
+                                    <div class="col-lg-10" style="margin-bottom: 10px">
+                                        <input type="text" class="form-control" name="itemCode" id="itemCode" value="<%=code%>" readonly="true">
+                                    </div>
+                                    <label class="col-lg-2">Item Name</label>
+                                    <div class="col-lg-10" style="margin-bottom: 10px">
+                                      <input type="text" class="form-control" name="itemName" id="itemName">
+                                    </div>
+                                    <label class="col-lg-2">Buying Price (RM)</label>
+                                    <div class="col-lg-10" style="margin-bottom: 10px">
+                                      <input type="text" class="form-control" name="buyPrice" id="buyPrice">
+                                    </div>
+                                    <label class="col-lg-2">Selling Price (RM)</label>
+                                    <div class="col-lg-10" style="margin-bottom: 10px">
+                                      <input type="text" class="form-control" name="" id="sellPrice">
+                                    </div>
+                                    <label class="col-lg-2"></label>
+                                    <div class="col-lg-10 pull-right" style="margin-bottom: 10px">
+                                        <button type="submit" class="btn btn-success" >Add</button>
+                                        <button type="submit" class="btn btn-success" >Update</button>
+                                        <button type="submit" class="btn btn-danger" >Delete</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                         <div id="custom-search-input">
                             <div class="input-group ">
-                                <input type="text" class="  search-query form-control" placeholder="Item Name" />
+                                <input id="search" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchItem()"/>
                                 <span class="input-group-btn">
-                                    <button id="search" class="btn btn-success pull-right" type="button">Search</button>
+                                    <button class="btn btn-success pull-right">Search</button>
                                 </span>
                             </div>
                         </div>
-                        
-                        <div id="miscItem">
-                            <table class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
+                        <div>
+                            <table id="miscItem" class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
                                 <thead>
                                     <th>Item Code</th>
                                     <th>Name</th>
                                     <th>Buying Price (RM)</th>
                                     <th>Selling Price (RM)</th>
-                                    <th></th>
                                 </thead>
                                 <tbody>
                                     <%
                                         DecimalFormat df = new DecimalFormat("0.00");
-                                        String query = "SELECT * FROM far_miscellaneous_item";
-                                        ArrayList<ArrayList<String>> data = Conn.getData(query);
-                                        if (!data.isEmpty()){
-                                            for (int i = 0; i< data.size(); i++){
+                                        String query2 = "SELECT * FROM far_miscellaneous_item";
+                                        ArrayList<ArrayList<String>> data2 = Conn.getData(query2);
+                                        if (!data2.isEmpty()){
+                                            for (int i = 0; i< data2.size(); i++){
                                     %>
                                     <tr>
-                                        <td><%=data.get(i).get(1)%></td>
-                                        <td><%=data.get(i).get(2)%></td>
-                                        <td><%=df.format(Double.parseDouble(data.get(i).get(3)))%></td>
-                                        <td><%=df.format(Double.parseDouble(data.get(i).get(4)))%></td>
-                                        <td>
-                                            <button id="delete" class="btn btn-success pull-right" type="button">Delete</button>
-                                            <button id="edit" class="btn btn-success pull-right" type="button">Edit</button>
-                                        </td>
+                                        <td><%=data2.get(i).get(1)%></td>
+                                        <td><%=data2.get(i).get(2)%></td>
+                                        <td><%=df.format(Double.parseDouble(data2.get(i).get(3)))%></td>
+                                        <td><%=df.format(Double.parseDouble(data2.get(i).get(4)))%></td>
                                     </tr>
                                     <%}}%>
                                 </tbody>
@@ -81,6 +117,35 @@
         <script src="assets/js/dateformat.js" type="text/javascript"></script>
         <script src="assets/js/jquery.min.js" type="text/javascript"></script>
         <script src="assets/js/custom.js" type="text/javascript"></script>
+        
+        <script>
+            function searchItem() {
+                // Declare variables 
+                var input, filter, table, tr, td, i;
+                input = document.getElementById("search");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("miscItem");
+                tr = table.getElementsByTagName("tr");
 
+                // Loop through all table rows, and hide those who don't match the search query
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[1];
+                    if (td) {
+                        if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    } 
+                }
+            }
+            $("#miscItem tbody tr").click(function(){
+                $(this).addClass('selected').siblings().removeClass('selected');    
+                document.getElementById("itemCode").value=$(this).find('td:first').html();
+                document.getElementById("itemName").value=$(this).find('td:nth-child(2)').html();
+                document.getElementById("buyPrice").value=$(this).find('td:nth-child(3)').html();
+                document.getElementById("sellPrice").value=$(this).find('td:nth-child(4)').html();
+            });
+            </script>
     </body>
 </html>
