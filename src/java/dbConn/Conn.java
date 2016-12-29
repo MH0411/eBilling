@@ -29,4 +29,16 @@ public class Conn {
         
         return data;
     }
+    
+    public static boolean setData(String query) 
+    {
+        try{
+            RMIConnector rmic = new RMIConnector();
+            rmic.setQuerySQL(Conn.HOST, Conn.PORT, query);
+            
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

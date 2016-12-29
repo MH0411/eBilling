@@ -8,3 +8,4 @@ $(document).ready(function($) {
     var path = window.location.pathname;
     $('#cssmenu ul li a[href="' + path + '"]').parent().addClass('active');
 });
+
