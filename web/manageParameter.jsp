@@ -51,5 +51,18 @@
 <%
             }
        }
-   }
+   } else if (action.equalsIgnoreCase("delete")){
+%>
+<%
+        String query = "DELETE FROM far_billing_parameter "
+                                    + "WHERE param_code = '"+ paraCode +"'";
+        if (Conn.setData(query)){
+%>
+                <div class="alert alert-success">
+                  <strong>Success!</strong> Item updated successfully.
+                </div>
+<%
+            
+        }
+}
 %>

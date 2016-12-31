@@ -31,7 +31,7 @@
                 <!--body-->
                 <div class="col-lg-10">
                     <div id="message"></div>
-                    <div id="details" class="thumbnail">
+                    <div id="paraDetails" class="thumbnail">
                         <div style="margin-bottom: 250px">
                             <h4>Bill Parameter</h4>
                             <div class="form-group">
@@ -75,8 +75,8 @@
                                 <label class="col-lg-2"></label>
                                 <div class="col-lg-10 pull-right" style="margin-bottom: 10px">
                                     <button id="add" type="submit" class="btn btn-success" >Add</button>
-                                    <button id="update" type="submit" class="btn btn-success" >Update</button>
-                                    <button id="delete" type="submit" class="btn btn-danger" >Delete</button>
+                                    <button id="update" type="submit" class="btn btn-success" disabled="true">Update</button>
+                                    <button id="delete" type="submit" class="btn btn-danger" disabled="true">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -151,6 +151,7 @@
                 document.getElementById('paraName').value = $(this).find('td:nth-child(2)').html();
                 document.getElementById('value').value = $(this).find('td:nth-child(3)').html();
                 var status = $(this).find('td:nth-child(4)').html();
+                
                 if (status === "yes"){
                     $('#enable').prop('value', 'N');
                     $('a[data-toggle="enable"]').not('[data-title="N"]').removeClass('active').addClass('notActive');
@@ -160,6 +161,9 @@
                     $('a[data-toggle="enable"]').not('[data-title="N"]').removeClass('active').addClass('notActive');
                     $('a[data-toggle="enable"][data-title="N"]').removeClass('notActive').addClass('active');
                 }
+                $('#add').prop('.disabled', true);
+                $('#update').prop('.disabled', false);
+                $('#delete').prop('.disabled', false);
             });
             $('#rbEnable a').on('click', function(){
                 var sel = $(this).data('title');
@@ -170,18 +174,30 @@
                 $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
             });
             $(document).ready(function(){
+                var paraCode = document.getElementById('paraCode').value;
+                var paraName = document.getElementById('paraName').value;
+                var value = document.getElementById('value').value;
+                var enable = $('#rbEnable a.active').html();
+                enable = String(enable).toLowerCase();
+                
                 $('#add').click(function(){
-                    var paraCode = document.getElementById('paraCode').value;
-                    var paraName = document.getElementById('paraName').value;
-                    var value = document.getElementById('value').value;
-                    var enable = $('#rbEnable a.active').html();
-                    enable = String(enable).toLowerCase();
-                    
                     $.get('manageParameter.jsp',{action:'add', paraCode:paraCode, paraName:paraName, value:value, enable:enable},function(data){
                         $('#message').html(data);
-                        $("#details").load(location.href + " #details");
+                        $("#paraDetails").load(location.href + " #paraDetails");
                     });
-                });              
+                });       
+                $('#update').click(function(){
+                    $.get('manageParameter.jsp',{action:'update', paraCode:paraCode, paraName:paraName, value:value, enable:enable},function(data){
+                        $('#message').html(data);
+                        $("#paraDetails").load(location.href + " #paraDetails");
+                    });
+                });   
+                $('#delete').click(function(){
+                    $.get('manageParameter.jsp',{action:'delete', paraCode:paraCode},function(data){
+                        $('#message').html(data);
+                        $("#paraDetails").load(location.href + " #paraDetails");
+                    });
+                });          
             });
             </script>
     </body>
