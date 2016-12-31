@@ -52,23 +52,29 @@
             }
        }
    } else if (action.equalsIgnoreCase("delete")){
+        if(paraCode.equals("BP001") || paraCode.equals("BP002") || paraCode.equals("BP003")){
 %>
+                <div class="alert alert-warning">
+                  <strong>Failed!</strong> Unable to delete default item.
+                </div>     
 <%
-        String query = "DELETE FROM far_billing_parameter "
-                                    + "WHERE param_code = '"+ paraCode +"'";
-        if (Conn.setData(query)){
+        } else {
+            String query = "DELETE FROM far_billing_parameter "
+                                        + "WHERE param_code = '"+ paraCode +"'";
+            if (Conn.setData(query)){
 %>
                 <div class="alert alert-success">
                   <strong>Success!</strong> Item deleted successfully.
                 </div>
 <%
             
-        } else {
+            } else {
 %>
                 <div class="alert alert-warning">
                   <strong>Failed!</strong> Item failed to delete. Please try again later.
                 </div>
 <%
-            }
+            }   
+        }
     }
 %>

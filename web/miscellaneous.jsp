@@ -30,10 +30,11 @@
         
                 <!--body-->
                 <div class="col-lg-10">
-                    <div class="thumbnail">
-                        <h4>Miscellaneous Item</h4>
+                    <div id="message"></div>
+                    <div id="miscDetails" class="thumbnail">
                         <div style="margin-bottom: 250px">
-                            <form>
+                            <h4>Miscellaneous Item</h4>
+                            <div style="margin-bottom: 250px">
                                 <div class="form-group">
                                     <%
                                         String query1 = 
@@ -43,6 +44,7 @@
                                         ArrayList<ArrayList<String>> data1 = Conn.getData(query1);
                                         String itemCode = data1.get(0).get(0);
                                         itemCode = itemCode.replaceAll("[^0-9]", "");
+                                        
                                         String code = "RG";
                                         for (int i = 0 ; i < 4 ; i++){
                                             code = code + "0";
@@ -63,16 +65,16 @@
                                     </div>
                                     <label class="col-lg-2">Selling Price (RM)</label>
                                     <div class="col-lg-10" style="margin-bottom: 10px">
-                                      <input type="text" class="form-control" name="" id="sellPrice">
+                                      <input type="text" class="form-control" name="sellPrice" id="sellPrice">
                                     </div>
                                     <label class="col-lg-2"></label>
                                     <div class="col-lg-10 pull-right" style="margin-bottom: 10px">
                                         <button type="submit" class="btn btn-success" >Add</button>
-                                        <button type="submit" class="btn btn-success" >Update</button>
-                                        <button type="submit" class="btn btn-danger" >Delete</button>
+                                        <button type="submit" class="btn btn-success" disabled="true">Update</button>
+                                        <button type="submit" class="btn btn-danger" disabled="true">Delete</button>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                         <div id="custom-search-input">
                             <div class="input-group ">
@@ -82,8 +84,17 @@
                                 </span>
                             </div>
                         </div>
-                        <div>
-                            <table id="miscItem" class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
+                        <div id="confirm" class="modal hide fade">
+                            <div class="modal-body">
+                                 Are you confirm to delete this item?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" data-dismiss="modal" class="btn btn-primary" id="confirmDelete">Delete</button>
+                                <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+                            </div>
+                        </div>       
+                        <div  id="miscItem" >
+                            <table class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
                                 <thead>
                                     <th>Item Code</th>
                                     <th>Name</th>
@@ -145,6 +156,38 @@
                 document.getElementById("itemName").value=$(this).find('td:nth-child(2)').html();
                 document.getElementById("buyPrice").value=$(this).find('td:nth-child(3)').html();
                 document.getElementById("sellPrice").value=$(this).find('td:nth-child(4)').html();
+                
+                $('#add').prop('.disabled', true);
+                $('#update').prop('.disabled', false);
+                $('#delete').prop('.disabled', false);        
+            });
+            $(document).ready(function(){
+                var itemCode = document.getElementById('itemCode').value;
+                var itemName = document.getElementById('itemName').value;
+                var buyPrice = document.getElementById('buyPrice').value;
+                var sellPrice = document.getElementById('sellPrice').value;
+                
+                $('#add').click(function(){
+                    $.get('manageMiscellaneous.jsp',{action:'add', itemCode:itemCode, itemName:itemName, buyPrice:buyPrice, sellPrice:sellPrice},function(data){
+                        $('#message').html(data);
+                        $("#miscDetails").load(location.href + " #miscDetails");
+                    });
+                });       
+                $('#update').click(function(){
+                    $.get('manageMiscellaneous.jsp',{action:'update', itemCode:itemCode, itemName:itemName, buyPrice:buyPrice, sellPrice:sellPrice},function(data){
+                        $('#message').html(data);
+                        $("#miscDetails").load(location.href + " #miscDetails");
+                    });
+                });   
+                $('#delete').click(function(){
+                    $('#confirm').modal({ backdrop: 'static', keyboard: false })
+                    .one('click', '#confirmDelete', function() {
+                        $.get('manageMiscellaneous.jsp',{action:'delete', itemCode:itemCode},function(data){
+                            $('#message').html(data);
+                            $("#miscDetails").load(location.href + " #miscDetails");
+                        });
+                    });
+                });            
             });
             </script>
     </body>
