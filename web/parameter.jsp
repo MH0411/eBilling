@@ -80,6 +80,15 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="confirm" class="modal hide fade">
+                            <div class="modal-body">
+                                 Are you confirm to delete this item?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" data-dismiss="modal" class="btn btn-primary" id="confirmDelete">Delete</button>
+                                <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+                            </div>
+                        </div>                                
                         <div id="custom-search-input">
                             <div class="input-group ">
                                 <input id="search" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchItem()"/>
@@ -193,9 +202,12 @@
                     });
                 });   
                 $('#delete').click(function(){
-                    $.get('manageParameter.jsp',{action:'delete', paraCode:paraCode},function(data){
-                        $('#message').html(data);
-                        $("#paraDetails").load(location.href + " #paraDetails");
+                    $('#confirm').modal({ backdrop: 'static', keyboard: false })
+                    .one('click', '#confirmDelete', function() {
+                        $.get('manageParameter.jsp',{action:'delete', paraCode:paraCode},function(data){
+                            $('#message').html(data);
+                            $("#paraDetails").load(location.href + " #paraDetails");
+                        });
                     });
                 });          
             });

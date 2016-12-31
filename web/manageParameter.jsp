@@ -59,10 +59,16 @@
         if (Conn.setData(query)){
 %>
                 <div class="alert alert-success">
-                  <strong>Success!</strong> Item updated successfully.
+                  <strong>Success!</strong> Item deleted successfully.
                 </div>
 <%
             
-        }
-}
+        } else {
+%>
+                <div class="alert alert-warning">
+                  <strong>Failed!</strong> Item failed to delete. Please try again later.
+                </div>
+<%
+            }
+    }
 %>
