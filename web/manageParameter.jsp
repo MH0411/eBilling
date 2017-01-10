@@ -16,65 +16,44 @@
        String value = request.getParameter("value");
        String enable = request.getParameter("enable");
        
-       if (paraName.isEmpty() || value.isEmpty()){ 
-%>
-        <div class="alert alert-warning">
-          <strong>Warning!</strong> Please fill in all empty fields.
-        </div>
-<%
-       } else {
-            String query = "";
-            if (action.equalsIgnoreCase("add")){
-                query = 
-                    "INSERT INTO far_billing_parameter(param_code,"
-                        + " param_name, param_value, enable) "
-                        + "VALUES('"+ paraCode +"', '"+ paraName +"',"
-                        + " '"+ value +"', '"+ enable +"')";
-            } else if (action.equalsIgnoreCase("update")) {        
-                query = 
-                    "UPDATE far_billing_parameter "
-                        + "SET param_code = '"+ paraCode +"', param_name = '"+ paraName +"',"
-                        + " param_value = '"+ value +"', enable = '"+ enable +"' "
-                        + "WHERE param_code = '"+ paraCode +"'";           
-            }
-            if (Conn.setData(query)){
-%>
-                <div class="alert alert-success">
-                  <strong>Success!</strong> Item updated successfully.
-                </div>          
-<%
-            } else {
-%>
-                <div class="alert alert-warning">
-                  <strong>Failed!</strong> Item failed to update. Please try again later.
-                </div>
-<%
-            }
-       }
+        String query = "";
+        if (action.equalsIgnoreCase("add")){
+            query = 
+                "INSERT INTO far_billing_parameter(param_code,"
+                    + " param_name, param_value, enable) "
+                    + "VALUES('"+ paraCode +"', '"+ paraName +"',"
+                    + " '"+ value +"', '"+ enable +"')";
+        } else if (action.equalsIgnoreCase("update")) {        
+            query = 
+                "UPDATE far_billing_parameter "
+                    + "SET param_code = '"+ paraCode +"', param_name = '"+ paraName +"',"
+                    + " param_value = '"+ value +"', enable = '"+ enable +"' "
+                    + "WHERE param_code = '"+ paraCode +"'";           
+        }
+        
+        if (Conn.setData(query)){
+            out.print("-|1");
+            return;
+        } else {
+            out.print("-|-1");
+            return;
+        }
+        
    } else if (action.equalsIgnoreCase("delete")){
         if(paraCode.equals("BP001") || paraCode.equals("BP002") || paraCode.equals("BP003")){
-%>
-                <div class="alert alert-warning">
-                  <strong>Failed!</strong> Unable to delete default item.
-                </div>     
-<%
+            out.print("-|Failed.\nDefault item cannot be delete.");
+            return;
         } else {
             String query = "DELETE FROM far_billing_parameter "
                                         + "WHERE param_code = '"+ paraCode +"'";
-            if (Conn.setData(query)){
-%>
-                <div class="alert alert-success">
-                  <strong>Success!</strong> Item deleted successfully.
-                </div>
-<%
             
+            if (Conn.setData(query)){
+                out.print("-|1");
+                return;
             } else {
-%>
-                <div class="alert alert-warning">
-                  <strong>Failed!</strong> Item failed to delete. Please try again later.
-                </div>
-<%
-            }   
+                out.print("-|-1");
+                return;
+            }
         }
     }
 %>
