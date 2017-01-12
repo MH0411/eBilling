@@ -30,73 +30,68 @@
         
                 <!--body-->
                 <div class="col-lg-10">
-                    <div id="message"></div>
-                        <div class="thumbnail">
-                            <div style="margin-bottom: 250px">
-                                    <h4>Bill Parameter</h4>
-                                    <div class="form-group">
-                                        <div id="reload">
-                                            <div id="getID">
-                                                <%
-                                                    String query1 ="SELECT MAX(param_code) FROM far_billing_parameter";
-                                                    ArrayList<ArrayList<String>> data = Conn.getData(query1);
-                                                    String itemCode = data.get(0).get(0);
-                                                    itemCode = itemCode.replaceAll("[^0-9]", "");
-                                                    System.out.print(itemCode);
-                                                    itemCode = String.valueOf(Integer.parseInt(itemCode)+1);
-                                                    System.out.print(itemCode);
-                                                    String code = "BP";
-                                                    for (int i = 0 ; itemCode.length() < 3 ; i++){
-                                                        itemCode = "0" + itemCode;
-                                                    }
-                                                    System.out.print(itemCode);
-                                                    code = code + itemCode;
-                                                %>
-                                                <label class="col-lg-2">Item Code</label>
-                                                <div class="col-lg-10" style="margin-bottom: 10px">
-                                                    <input type="text" class="form-control" name="paraCode" id="paraCode" value="<%=code%>" readonly="true">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <label class="col-lg-2">Item Name</label>
+                    <div class="thumbnail">
+                        <div style="margin-bottom: 250px">
+                            <h4>Bill Parameter</h4>
+                            <div class="form-group">
+                                <div id="reload">
+                                    <div id="getID">
+                                        <%
+                                            String query1 ="SELECT MAX(param_code) FROM far_billing_parameter";
+                                            ArrayList<ArrayList<String>> data = Conn.getData(query1);
+                                            String itemCode = data.get(0).get(0);
+                                            itemCode = itemCode.replaceAll("[^0-9]", "");
+                                            itemCode = String.valueOf(Integer.parseInt(itemCode)+1);
+                                            
+                                            String code = "BP";
+                                            for (int i = 0 ; itemCode.length() < 3 ; i++){
+                                                itemCode = "0" + itemCode;
+                                            }
+                                            code = code + itemCode;
+                                        %>
+                                        <label class="col-lg-2">Item Code</label>
                                         <div class="col-lg-10" style="margin-bottom: 10px">
-                                          <input type="text" class="form-control" name="paraName" id="paraName">
-                                        </div>
-                                        <label class="col-lg-2">Value</label>
-                                        <div class="col-lg-10" style="margin-bottom: 10px">
-                                          <input type="text" class="form-control" name="value" id="value">
-                                        </div>
-                                        <label class="col-lg-2">Enabled</label>
-                                        <div class="col-sm-7 col-md-7" style="margin-bottom: 10px">
-                                                <div class="input-group">
-                                                        <div id="rbEnable" class="btn-group">
-                                                                <a class="btn btn-primary btn-sm active" data-toggle="enable" data-title="Y">YES</a>
-                                                                <a class="btn btn-primary btn-sm" data-toggle="enable" data-title="N">NO</a>
-                                                        </div>
-                                                        <input type="hidden" name="happy" id="enable">
-                                                </div>
-                                        </div>
-                                        <label class="col-lg-2"></label>
-                                        <div class="col-lg-10 pull-right" style="margin-bottom: 10px">
-                                            <button id="add" class="btn btn-success">Add</button>
-                                            <button id="update" class="btn btn-success" disabled="true">Update</button>
-                                            <button id="delete" class="btn btn-danger" disabled="true">Delete</button>
+                                            <input type="text" class="form-control" name="paraCode" id="paraCode" value="<%=code%>" readonly="true">
                                         </div>
                                     </div>
                                 </div>
-                                <div id="custom-search-input">
-                                    <div class="input-group ">
-                                        <input id="search" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchItem()"/>
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-success pull-right">Search</button>
-                                        </span>
-                                    </div>
+                                <label class="col-lg-2">Item Name</label>
+                                <div class="col-lg-10" style="margin-bottom: 10px">
+                                  <input type="text" class="form-control" name="paraName" id="paraName">
                                 </div>
-                                <div id="billPara">
+                                <label class="col-lg-2">Value</label>
+                                <div class="col-lg-10" style="margin-bottom: 10px">
+                                  <input type="text" class="form-control" name="value" id="value">
+                                </div>
+                                <label class="col-lg-2">Enabled</label>
+                                <div class="col-sm-7 col-md-7" style="margin-bottom: 10px">
+                                        <div class="input-group">
+                                                <div id="rbEnable" class="btn-group">
+                                                        <a class="btn btn-primary btn-sm active" data-toggle="enable" data-title="Y">YES</a>
+                                                        <a class="btn btn-primary btn-sm" data-toggle="enable" data-title="N">NO</a>
+                                                </div>
+                                                <input type="hidden" name="happy" id="enable">
+                                        </div>
+                                </div>
+                                <label class="col-lg-2"></label>
+                                <div class="col-lg-10 pull-right" style="margin-bottom: 10px">
+                                    <button id="add" class="btn btn-success">Add</button>
+                                    <button id="update" class="btn btn-success" disabled="true">Update</button>
+                                    <button id="delete" class="btn btn-danger" disabled="true">Delete</button>
                                 </div>
                             </div>
                         </div>
-                </div>
+                        <div id="custom-search-input">
+                            <div class="input-group ">
+                                <input id="search" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchItem()"/>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-success pull-right">Search</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div id="billPara"></div>
+                    </div>
+                </div>  
             </div>
         </div>
             
@@ -220,36 +215,31 @@
                     });
                 $('#delete').click(function(){
                     var paraCode = document.getElementById('paraCode').value;
-                    
-                        if (paraName === "" || value === "") {
-                            alert("Please fill in empty fields."); 
-                        } else {
-                            $.ajax({
-                                url: "manageParameter.jsp",
-                                type: "post",
-                                data: {
-                                    action: 'delete',
-                                    paraCode: paraCode
-                                },
-                                timeout: 10000,
-                                success: function(data) {
-                                    var d = data.split("|");
-                                    if (d[1] == '1') {
-                                        $('#billPara').load("tableParameter.jsp");
-                                     } else {
-                                         alert(d[1]);
-                                     }
-                                    $('#reload').load(location.href + " #getID");
-                                    $('#paraName').val('');
-                                    $('#value').val('');
-                                    $('#enable').prop('value', 'Y');
-                                    $('a[data-toggle="enable"]').not('[data-title="Y"]').removeClass('active').addClass('notActive');
-                                    $('a[data-toggle="enable"][data-title="Y"]').removeClass('notActive').addClass('active');
-                                },
-                                error: function(err) {
-                                }
-                            });
-                        }
+                        $.ajax({
+                            url: "manageParameter.jsp",
+                            type: "post",
+                            data: {
+                                action: 'delete',
+                                paraCode: paraCode
+                            },
+                            timeout: 10000,
+                            success: function(data) {
+                                var d = data.split("|");
+                                if (d[1] == '1') {
+                                    $('#billPara').load("tableParameter.jsp");
+                                 } else {
+                                     alert(d[1]);
+                                 }
+                                $('#reload').load(location.href + " #getID");
+                                $('#paraName').val('');
+                                $('#value').val('');
+                                $('#enable').prop('value', 'Y');
+                                $('a[data-toggle="enable"]').not('[data-title="Y"]').removeClass('active').addClass('notActive');
+                                $('a[data-toggle="enable"][data-title="Y"]').removeClass('notActive').addClass('active');
+                            },
+                            error: function(err) {
+                            }
+                        });
                     });
                 });
         </script>
