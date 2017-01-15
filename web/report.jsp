@@ -16,7 +16,7 @@
                     <div id="cssmenu">
                         <ul>
                             <li><a href="index.jsp"><span>Billing</span></a></li>
-                            <li><a href="manage.jsp"><span>Manage Bill</span></a></li>
+                            <li><a href="bill.jsp"><span>Manage Bill</span></a></li>
                             <li><a href="miscellaneous.jsp"><span>Miscellaneous</span></a></li>
                             <li><a href="parameter.jsp"><span>Bill Parameter</span></a></li>
                             <li class="active"><a href="report.jsp"><span>Report</span></a></li>
@@ -105,6 +105,71 @@
                               ic: ic,
                               year:year,
                               month:month
+                          },
+                          timeout: 10000,
+                          success: function(data) {
+                                var d = data.split("|");
+                                if (d[1] == '1') {
+                                 } else {
+                                     alert(d[1]);
+                                 }
+                          },
+                          error: function(err) {
+                          }
+                      });
+                    }
+                });
+                
+              $('#detailsStatement').click(function(){
+                  var ic = document.getElementById('ic').value;
+                  var year = document.getElementById('year').value;
+                  var month = document.getElementById('month').value;
+                    if (month.length !== 2){          
+                        month = "0" + month;;
+                    }
+                    
+                  if (ic === "") {
+                      alert('Please fill in patient IC No.');
+                  } else {
+                      $.ajax({
+                          url: "generateReport.jsp",
+                          type: "post",
+                          data: {
+                              action:'detailsStatement',
+                              ic: ic,
+                              year:year,
+                              month:month
+                          },
+                          timeout: 10000,
+                          success: function(data) {
+                                var d = data.split("|");
+                                if (d[1] == '1') {
+                                 } else {
+                                     alert(d[1]);
+                                 }
+                          },
+                          error: function(err) {
+                          }
+                      });
+                    }
+                });
+                
+              $('#yearEndReport').click(function(){
+                  var ic = document.getElementById('ic').value;
+                  var year = document.getElementById('year').value;
+                  var month = document.getElementById('month').value;
+                    if (month.length !== 2){          
+                        month = "0" + month;;
+                    }
+                    
+                  if (ic === "") {
+                      alert('Please fill in patient IC No.');
+                  } else {
+                      $.ajax({
+                          url: "generateReport.jsp",
+                          type: "post",
+                          data: {
+                              action:'yearEndReport'
                           },
                           timeout: 10000,
                           success: function(data) {
