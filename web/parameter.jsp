@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : parameter
     Created on : Dec 24, 2016, 6:18:20 PM
     Author     : Mike Ho
@@ -15,7 +15,7 @@
         <div class="container-fluid">
             <%@include file = "includes/topMenu.html" %>
             <div class="row">
-                <div class="col-lg-2">                
+                <div class="col-lg-2">
                     <div id="cssmenu">
                         <ul>
                             <li><a href="index.jsp"><span>Billing</span></a></li>
@@ -25,9 +25,9 @@
                             <li><a href="report.jsp"><span>Report</span></a></li>
                             <li><a href="closing.jsp"><span>Closing</span></a></li>
                         </ul>
-                    </div>   
+                    </div>
                 </div>
-        
+
                 <!--body-->
                 <div class="col-lg-10">
                     <div class="thumbnail">
@@ -42,7 +42,7 @@
                                             String itemCode = data.get(0).get(0);
                                             itemCode = itemCode.replaceAll("[^0-9]", "");
                                             itemCode = String.valueOf(Integer.parseInt(itemCode)+1);
-                                            
+
                                             String code = "BP";
                                             for (int i = 0 ; itemCode.length() < 3 ; i++){
                                                 itemCode = "0" + itemCode;
@@ -91,10 +91,10 @@
                         </div>
                         <div id="billPara"></div>
                     </div>
-                </div>  
+                </div>
             </div>
         </div>
-            
+
         <!--js-->
         <script src="assets/js/dateformat.js" type="text/javascript"></script>
         <script src="assets/js/jquery.min.js" type="text/javascript"></script>
@@ -102,7 +102,7 @@
 
         <script type="text/javascript">
             function searchItem() {
-                // Declare variables 
+                // Declare variables
                 var input, filter, table, tr, td, i;
                 input = document.getElementById("search");
                 filter = input.value.toUpperCase();
@@ -118,10 +118,10 @@
                         } else {
                             tr[i].style.display = "none";
                         }
-                    } 
+                    }
                 }
             }
-            
+
             $(document).ready(function(){
                 $('#billPara').load("tableParameter.jsp");
 
@@ -139,9 +139,9 @@
                     var value = document.getElementById('value').value;
                     var enable = $('#rbEnable a.active').html();
                     enable = String(enable).toLowerCase();
-                    
+
                         if (paraName === "" || value === "") {
-                            alert("Please fill in empty fields."); 
+                            alert("Please fill in empty fields.");
                         } else {
                             $.ajax({
                                 url: "manageParameter.jsp",
@@ -159,8 +159,8 @@
                                     if (d[1] == '1') {
                                         $('#billPara').load("tableParameter.jsp");
                                         $('#reload').load(location.href + " #getID");
-                                        $('paraName').val('');
-                                        $('value').val('');
+                                        $('#paraName').val('');
+                                        $('#value').val('');
                                         $('#enable').prop('value', 'Y');
                                         $('a[data-toggle="enable"]').not('[data-title="Y"]').removeClass('active').addClass('notActive');
                                         $('a[data-toggle="enable"][data-title="Y"]').removeClass('notActive').addClass('active');
@@ -179,9 +179,9 @@
                     var value = document.getElementById('value').value;
                     var enable = $('#rbEnable a.active').html();
                     enable = String(enable).toLowerCase();
-                    
+
                         if (paraName === "" || value === "") {
-                            alert("Please fill in empty fields."); 
+                            alert("Please fill in empty fields.");
                         } else {
                             $.ajax({
                                 url: "manageParameter.jsp",
@@ -199,8 +199,8 @@
                                     if (d[1] == '1') {
                                         $('#billPara').load("tableParameter.jsp");
                                         $('#reload').load(location.href + " #getID");
-                                        $('paraName').val('');
-                                        $('value').val('');
+                                        $('#paraName').val('');
+                                        $('#value').val('');
                                         $('#enable').prop('value', 'Y');
                                         $('a[data-toggle="enable"]').not('[data-title="Y"]').removeClass('active').addClass('notActive');
                                         $('a[data-toggle="enable"][data-title="Y"]').removeClass('notActive').addClass('active');
