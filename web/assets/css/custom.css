@@ -213,3 +213,7 @@ and open the template in the editor.
     margin-left: 10px;
     background-color: #EE5E68;
 }
+
+#reportDetails button{
+    width: 30%;
+}
