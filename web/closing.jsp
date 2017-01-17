@@ -16,7 +16,7 @@
                     <div id="cssmenu">
                         <ul>
                             <li><a href="index.jsp"><span>Billing</span></a></li>
-                            <li><a href=".jsp"><span>Manage Bill</span></a></li>
+                            <li><a href="bill.jsp"><span>Manage Bill</span></a></li>
                             <li><a href="miscellaneous.jsp"><span>Miscellaneous</span></a></li>
                             <li><a href="parameter.jsp"><span>Bill Parameter</span></a></li>
                             <li><a href="report.jsp"><span>Report</span></a></li>
@@ -32,28 +32,28 @@
                         <div style="margin-bottom: 250px">
                             <h4>Year End Processing</h4>
                             
-                            <div class="col-lg-10" style="margin-bottom: 10px">
+                            <div class="col-lg-10" style="margin-bottom: 20px">
                                 <div id="backup" class="progress">
                                     <div id="backupPB" class="progress-bar">
-                                        <div id="percentBackup">0%</div>
+                                        <div id="percentBackup"></div>
                                     </div>
                                 </div>
                                 <button id="btnBackup" type="submit" class="btn btn-info" >Backup Customer Data</button><br>
                             </div>
                             
-                            <div class="col-lg-10" style="margin-bottom: 10px">
+                            <div class="col-lg-10" style="margin-bottom: 20px">
                                 <div id="process" class="progress">
                                     <div id="processPB" class="progress-bar">
-                                        <div id="percentProcess">0%</div>
+                                        <div id="percentProcess"></div>
                                     </div>
                                 </div>
                                 <button id="btnProcess" type="submit" class="btn btn-info" disabled="true">Start Year End Processing</button><br>
                             </div>
                             
-                            <div class="col-lg-10" style="margin-bottom: 10px">
+                            <div class="col-lg-10" style="margin-bottom: 20px">
                                 <div id="restore" class="progress">
                                     <div id="restorePB" class="progress-bar">
-                                        <div id="percentRestore">0%</div>
+                                        <div id="percentRestore"></div>
                                     </div>
                                 </div>
                                 <button id="btnRestore" type="submit" class="btn btn-info" disabled="true">Restore Customer Data</button><br>
@@ -121,7 +121,8 @@
                         url: "yearEndProcess.jsp",
                         type: "post",
                         data: {
-                            action: 'progress'
+                            action: 'progress',
+                            year: new Date().getFullYear()
                         },
                         timeout: 10000,
                         success: function(data) {
@@ -172,6 +173,7 @@
                                     if (width >= status) {
                                         clearInterval(id);
                                         alert(d[2]);
+                                        $('#btnProcess').prop('disabled', false);
                                     } else {
                                         width++; 
                                         elem.style.width = width + '%'; 

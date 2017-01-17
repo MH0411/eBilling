@@ -44,7 +44,7 @@
             return;
         }
         
-    } else if (action.equalsIgnoreCase("yep")){
+    } else if (action.equalsIgnoreCase("progress")){
         int status = startProcess(year);
         if(status == 0){
             String infoMessage = "The year end process of current year have been done.\nPlease go to report section to view year end report.";
