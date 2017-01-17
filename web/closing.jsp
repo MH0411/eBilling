@@ -16,7 +16,7 @@
                     <div id="cssmenu">
                         <ul>
                             <li><a href="index.jsp"><span>Billing</span></a></li>
-                            <li><a href="manage.jsp"><span>Manage Bill</span></a></li>
+                            <li><a href=".jsp"><span>Manage Bill</span></a></li>
                             <li><a href="miscellaneous.jsp"><span>Miscellaneous</span></a></li>
                             <li><a href="parameter.jsp"><span>Bill Parameter</span></a></li>
                             <li><a href="report.jsp"><span>Report</span></a></li>
@@ -31,21 +31,34 @@
                     <div id="reportDetails" class="thumbnail">
                         <div style="margin-bottom: 250px">
                             <h4>Year End Processing</h4>
-                            <div id="patient" class="col-lg-10" style="margin-bottom: 10px">
-                                <select id="year">
-                                </select>
-                            </div>
+                            
                             <div class="col-lg-10" style="margin-bottom: 10px">
-                                <button id="yearlyStatement" type="submit" class="btn btn-info" >Customer Yearly Account Statement</button><br>
+                                <div id="backup" class="progress">
+                                    <div id="backupPB" class="progress-bar">
+                                        <div id="percentBackup">0%</div>
+                                    </div>
+                                </div>
+                                <button id="btnBackup" type="submit" class="btn btn-info" >Backup Customer Data</button><br>
                             </div>
+                            
                             <div class="col-lg-10" style="margin-bottom: 10px">
-                                <button id="detailsStatement" type="submit" class="btn btn-info" >Customer Details Account Statement</button><br>
+                                <div id="process" class="progress">
+                                    <div id="processPB" class="progress-bar">
+                                        <div id="percentProcess">0%</div>
+                                    </div>
+                                </div>
+                                <button id="btnProcess" type="submit" class="btn btn-info" disabled="true">Start Year End Processing</button><br>
                             </div>
+                            
                             <div class="col-lg-10" style="margin-bottom: 10px">
-                                <form action="report.jsp" method="POST">
-                                    <button id="yearEndReport" type="submit" class="btn btn-info" >Year End Processing Report</button>
-                                </form>
+                                <div id="restore" class="progress">
+                                    <div id="restorePB" class="progress-bar">
+                                        <div id="percentRestore">0%</div>
+                                    </div>
+                                </div>
+                                <button id="btnRestore" type="submit" class="btn btn-info" disabled="true">Restore Customer Data</button><br>
                             </div>
+                            
                     </div>
                 </div>
             </div>
@@ -56,10 +69,122 @@
         <script src="assets/js/custom.js" type="text/javascript"></script>
         <script type="text/javascript">
             $(document).ready(function(){
-                var $year = $("#year");
-                $year.empty();
-                $.each(vals, function(index, value) {
-                    $year.append("<option>" + value + "</option>");
+                $('#btnBackup').click(function(){
+                    var date = new Date();
+                    var month = date.getMonth() + 1;
+                    if (month.length !== 2){          
+                        month = "0" + month;;
+                    }
+                    $(this).prop('disabled', true);
+                    
+                    $.ajax({
+                        url: "yearEndProcess.jsp",
+                        type: "post",
+                        data: {
+                            action: 'backup'
+                        },
+                        timeout: 10000,
+                        success: function(data) {
+                            var d = data.split("|");
+                            if (d[1] == '1') {
+                                var elem = document.getElementById('backupPB'); 
+                                var width = 0;
+                                var id = setInterval(frame, 100);
+                                var status = d[3];
+                                
+                                function frame() {
+                                    if (width >= status) {
+                                        clearInterval(id);
+                                        alert(d[2]);
+                                        if(month == "11" || month == "12" || month == "01"){
+                                            $('#btnProcess').prop('disabled', false);
+                                        }
+                                    } else {
+                                        width++; 
+                                        elem.style.width = width + '%'; 
+                                        document.getElementById('percentBackup').innerHTML = width * 1 + '%';
+                                    }
+                                }
+                             } else {
+                                 alert(d[2]);
+                             }
+                        },
+                        error: function(err) {
+                        }
+                    });
+                });
+                
+                $('#btnProcess').click(function(){
+                    $(this).prop('disabled', true);
+                    
+                    $.ajax({
+                        url: "yearEndProcess.jsp",
+                        type: "post",
+                        data: {
+                            action: 'progress'
+                        },
+                        timeout: 10000,
+                        success: function(data) {
+                            var d = data.split("|");
+                            if (d[1] == '1') {
+                                var elem = document.getElementById('progressPB'); 
+                                var width = 0;
+                                var id = setInterval(frame, 100);
+                                var status = d[3];
+                                
+                                function frame() {
+                                    if (width >= status) {
+                                        clearInterval(id);
+                                        alert(d[2]);
+                                    } else {
+                                        width++; 
+                                        elem.style.width = width + '%'; 
+                                        document.getElementById('percentProgress').innerHTML = width * 1 + '%';
+                                    }
+                                }
+                             } else {
+                                 alert(d[2]);
+                                 $('#btnRestore').prop('disabled', false);
+                             }
+                        },
+                        error: function(err) {
+                        }
+                    });
+                });      
+                
+                $('#btnRestore').click(function(){
+                    $.ajax({
+                        url: "yearEndProcess.jsp",
+                        type: "post",
+                        data: {
+                            action: 'restore'
+                        },
+                        timeout: 10000,
+                        success: function(data) {
+                            var d = data.split("|");
+                            if (d[1] == '1') {
+                                var elem = document.getElementById('restorePB'); 
+                                var width = 0;
+                                var id = setInterval(frame, 100);
+                                var status = d[3];
+                                
+                                function frame() {
+                                    if (width >= status) {
+                                        clearInterval(id);
+                                        alert(d[2]);
+                                    } else {
+                                        width++; 
+                                        elem.style.width = width + '%'; 
+                                        document.getElementById('percentRestore').innerHTML = width * 1 + '%';
+                                    }
+                                }
+                             } else {
+                                 alert(d[2]);
+                             }
+                        },
+                        error: function(err) {
+                        }
+                    });
                 });
             });
         </script>
