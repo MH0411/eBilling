@@ -34,7 +34,7 @@
                             <div class="form-group" >
                                 <label class="col-lg-2">Patient IC No.</label>
                                 <div class="col-lg-10" style="margin-bottom: 10px">
-                                    <input type="number" class="form-control" name="patientIC" id="patientIC" placeholder="IC No.">
+                                    <input id="patientIC" type="number" class="form-control" name="patientIC" placeholder="IC No.">
                                 </div>
                                 <label class="col-lg-2">Year</label>
                                 <div class="col-lg-10" style="margin-bottom: 10px">
@@ -121,12 +121,13 @@
                 });
                 
               $('#detailsStatement').click(function(){
-                  var ic = document.getElementById('ic').value;
+                  var ic = document.getElementById('patientIC').value;
                   var year = document.getElementById('year').value;
                   var month = document.getElementById('month').value;
-                    if (month.length !== 2){          
+                  
+                  if (month.length !== 2){          
                         month = "0" + month;;
-                    }
+                  }
                     
                   if (ic === "") {
                       alert('Please fill in patient IC No.');
