@@ -61,7 +61,6 @@
         </div>
 
         <!--js-->
-        <script src="assets/js/dateformat.js" type="text/javascript"></script>
         <script src="assets/js/jquery.min.js" type="text/javascript"></script>
         <script src="assets/js/custom.js" type="text/javascript"></script>
         <script type="text/javascript">
