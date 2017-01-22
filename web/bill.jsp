@@ -60,7 +60,7 @@
                             <div id="billDetails">
                                 <table id="tableBill" class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
                                     <thead>
-                                        <th>Txn Date</th>
+                                        <th>Transaction Date</th>
                                         <th>Bill No.</th>
                                         <th>Customer ID</th>
                                         <th>Name</th>

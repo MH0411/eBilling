@@ -23,7 +23,7 @@
     ArrayList<ArrayList<String>> data = Conn.getData(query);%>
 <table class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
     <thead>
-        <th>Txn Date</th>
+        <th>Transaction Date</th>
         <th>Bill No.</th>
         <th>Customer ID</th>
         <th>Name</th>
@@ -63,6 +63,7 @@
 %>
             $('#select<%=i%>').click(function(){
                 var billNo = $(this).closest("tr").find("td:nth-child(2)").text();
+                var custID = $(this).closest("tr").find("td:nth-child(3)").text();
                 var status = $('#rbStatus a.active').html();
                 status = String(status).toLowerCase();
                 
@@ -70,6 +71,7 @@
                     url: "historyBillDetail.jsp",
                     type: "post",
                     data: {
+                        custID:custID,
                         billNo: billNo,
                         status: status
                     },
