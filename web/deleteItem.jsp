@@ -4,6 +4,7 @@
     Author     : Mike Ho
 --%>
 
+<%@page import="Class.Month"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.text.DateFormat"%>
@@ -18,21 +19,25 @@
     
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
     String txnDate = dateFormat.format(new Date());
-    
+
     //Delete from customer dtl
     String sql1 = "DELETE FROM  far_customer_dtl "
-           + "WHERE bill_no = '"+ billNo +"'"
+           + "WHERE bill_no = '"+ billNo +"' "
            + "AND item_cd = '"+ itemCode +"' ";
     dbConn.Conn.setData(sql1);
-    
+
     String month = new Month().getDebitMonth();
+
     //Get current credit of customer
-    String sql2 = "SELECT  ISNULL("+ month +",0) "
+    String sql2 = "SELECT  "+ month +" "
             + "FROM far_customer_ledger "
             + "WHERE customer_id = '"+ custID +"' ";
     ArrayList<ArrayList<String>> data1 = dbConn.Conn.getData(sql2);
     String currentDebit = data1.get(0).get(0);
     
+    if (currentDebit == null){
+        currentDebit = "0";
+    }
     currentDebit = String.valueOf(Double.parseDouble(currentDebit) - Double.parseDouble(itemAmt));
 
     //Update customer ledger

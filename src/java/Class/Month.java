@@ -1,3 +1,5 @@
+package Class;
+
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -14,11 +16,11 @@ import java.util.Date;
  * @author Mike Ho
  */
 public class Month {
-    private DateFormat monthFormat = new SimpleDateFormat("MM");
-    private Date date = new Date();
-    private String creditMonth = null;
-    private String debitMonth = null;
-    private String month = monthFormat.format(date);
+    private static DateFormat monthFormat = new SimpleDateFormat("MM");
+    private static Date date = new Date();
+    private static String creditMonth = null;
+    private static String debitMonth = null;
+    private static String month = monthFormat.format(date);
     
     public Month(){
         determineCreditMonth();

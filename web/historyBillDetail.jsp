@@ -28,7 +28,11 @@
         </div>
         <label class="col-lg-2">Transaction Date</label>
         <div class="col-lg-10" style="margin-bottom: 10px">
-            <input type="text" class="form-control" name="txnDate" id="txnDate" value="<%=dataBill.get(0).get(0)%>" readonly="true">
+            <input type="text" class="form-control" name="txnDate" id="txnDate" value="" readonly="true">
+        </div>
+        <label class="col-lg-2">Customer ID</label>
+        <div class="col-lg-10" style="margin-bottom: 10px">
+            <input type="text" class="form-control" name="txnDate" id="custID" value="<%=custID%>" readonly="true">
         </div>
         <label class="col-lg-2">Name</label>
         <div class="col-lg-10" style="margin-bottom: 10px">
@@ -52,50 +56,52 @@
         </div>
     </div>
 </div>
-
-<div id="listOfItems">
-    <table id="tableItems" class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
-        <thead>
-            <th>Transaction Date</th>
-            <th>Item Code</th>
-            <th>Item Description</th>
-            <th style="text-align: right;">Item Quantity</th>
-            <th style="text-align: right;">Unit Price (RM)</th>
-            <th style="text-align: right;">Total Amount (RM)</th>
-            <th><th>
-        </thead>
-        <tbody>
+        
+<div>
+    <div id="listOfItems">
+        <table id="tableItems" class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
+            <thead>
+                <th>Transaction Date</th>
+                <th>Item Code</th>
+                <th>Item Description</th>
+                <th style="text-align: right;">Item Quantity</th>
+                <th style="text-align: right;">Unit Price (RM)</th>
+                <th style="text-align: right;">Total Amount (RM)</th>
+                <th><th>
+            </thead>
+            <tbody>
 <%
         String query2 = 
                 "SELECT txn_date, item_cd, item_desc, quantity, item_amt/quantity, item_amt "
                 + "FROM far_customer_dtl "
                 + "WHERE bill_no = '"+ billNo +"' ";
         ArrayList<ArrayList<String>> dataBill = dbConn.Conn.getData(query2);
-        
+
         if (!dataBill.isEmpty()){
             System.out.print(dataBill);
             for(int i = 0; i < dataBill.size(); i++){
 %>
-        <tr>
-            <td><%=dataBill.get(i).get(0)%></td>
-            <td><%=dataBill.get(i).get(1)%></td>
-            <td><%=dataBill.get(i).get(2)%></td>
-            <td style="text-align: right;"><%=dataBill.get(i).get(3)%></td>
-            <td style="text-align: right;"><%=df.format(Double.parseDouble(dataBill.get(i).get(4)))%></td>
-            <td style="text-align: right;"><%=df.format(Double.parseDouble(dataBill.get(i).get(5)))%></td>
+            <tr>
+                <td><%=dataBill.get(i).get(0)%></td>
+                <td><%=dataBill.get(i).get(1)%></td>
+                <td><%=dataBill.get(i).get(2)%></td>
+                <td style="text-align: right;"><%=dataBill.get(i).get(3)%></td>
+                <td style="text-align: right;"><%=df.format(Double.parseDouble(dataBill.get(i).get(4)))%></td>
+                <td style="text-align: right;"><%=df.format(Double.parseDouble(dataBill.get(i).get(5)))%></td>
 <%
-    if (status.equalsIgnoreCase("unpaid")){
+            if (status.equalsIgnoreCase("unpaid")){
 %>
-            <td>
-                <button id="delete<%=i%>" class="btn btn-danger pull-right" type="button">Delete</button>
-            </td>
+                <td>
+                    <button id="delete<%=i%>" class="btn btn-danger pull-right" type="button">Delete</button>
+                </td>
 <%} else {%>
-            <td></td>
+                <td></td>
 <%}%>
-        </tr>
+            </tr>
 <%}}%>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>
         
 <div>
@@ -114,6 +120,7 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
+        $('#txnDate').val('<%=dataBill.get(0).get(0)%>');
 <%
     if (status.equalsIgnoreCase("unpaid")){
             for (int i = 0; i < dataBill.size(); i++){
@@ -124,9 +131,10 @@
             var itemCode = $(this).closest("tr").find("td:nth-child(2)").text();
             var qty = $(this).closest("tr").find("td:nth-child(4)").text();
             var itemAmt = $(this).closest("tr").find("td:nth-child(6)").text();
+            var $tr = $(this).closest ('tr');
             
             $.ajax({
-                url: "searchPatient.jsp",
+                url: "deleteItem.jsp",
                 type: "post",
                 data: {
                     billNo: billNo,
@@ -138,7 +146,7 @@
                 timeout: 10000,
                 success: function(data) {
                     alert('Success delete data');
-                    $('#listOfItems').load(location.href + " #tableItems");
+                     $tr.remove();
                 },
                 error: function(err) {
                     alert('Failed to delete the item.');
