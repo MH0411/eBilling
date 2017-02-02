@@ -78,7 +78,7 @@
         ArrayList<ArrayList<String>> dataBill = dbConn.Conn.getData(query2);
 
         if (!dataBill.isEmpty()){
-            System.out.print(dataBill);
+
             for(int i = 0; i < dataBill.size(); i++){
 %>
             <tr>

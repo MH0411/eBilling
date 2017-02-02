@@ -30,30 +30,32 @@
                 <!--body-->
                 <div class="col-lg-10">
                     <div class="thumbnail">
-                        <h4>Patient Information</h4>
-                        <div id="custom-search-input">
-                            <div class="input-group ">
-                                <input id="ic" type="text" class="  search-query form-control" placeholder="IC No." />
-                                <span class="input-group-btn">
-                                    <button id="searchPatient" class="btn btn-success pull-right" type="button">Search</button>
-                                </span>
+                        <div id="generateBill">
+                            <h4><b>Patient Information</b></h4>
+                            <div id="custom-search-input">
+                                <div class="input-group ">
+                                    <input id="ic" type="text" class="  search-query form-control" placeholder="IC No." />
+                                    <span class="input-group-btn">
+                                        <button id="searchPatient" class="btn btn-success pull-right" type="button">Search</button>
+                                    </span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div id="patientDetails">
-                            <table class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
-                                <thead>
-                                    <th>Episode Date</th>
-                                    <th>Order No.</th>
-                                    <th>PMI No.</th>
-                                    <th>IC No.</th>
-                                    <th>Other ID</th>
-                                    <th>Name</th>
-                                    <th>Address</th>
-                                    <th>Phone No.</th>
-                                    <th></th>
-                                </thead>
-                            </table>
+                            <div id="patientDetails">
+                                <table class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
+                                    <thead>
+                                        <th>Episode Date</th>
+                                        <th>Order No.</th>
+                                        <th>PMI No.</th>
+                                        <th>IC No.</th>
+                                        <th>Other ID</th>
+                                        <th>Name</th>
+                                        <th>Address</th>
+                                        <th>Phone No.</th>
+                                        <th></th>
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -70,23 +72,15 @@
                   
                   if (ic === "") {
                   } else {
-                    var date = new Date();
-                    var month = date.getMonth() + 1;
-                    if (month.length !== 2){          
-                        month = "0" + month;;
-                    }
-                    date = date.getFullYear() + '-' + month + '-' + date.getDate();
-                    
                       $.ajax({
                           url: "searchPatient.jsp",
                           type: "post",
                           data: {
-                              date: date,
                               ic: ic
                           },
                           timeout: 10000,
                           success: function(data) {
-                            $('#patientDetails').load('searchPatient.jsp');
+                            $('#patientDetails').html(data);
                           },
                           error: function(err) {
                           }

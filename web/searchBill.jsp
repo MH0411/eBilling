@@ -48,9 +48,7 @@
         <td><%=data.get(i).get(4)%></td>
         <td><%=data.get(i).get(6)%></td>
         <td><%=data.get(i).get(8)%></td>
-        <td>
-            <button id="select<%=i%>" class="btn btn-success pull-right" type="button">Select</button>
-        </td>
+        <td><button id="select<%=i%>" class="btn btn-success pull-right" type="button">Select</button></td>
     </tr>
     <%}}%>
     </tbody>
