@@ -103,6 +103,14 @@
         <div class="col-lg-10" style="margin-bottom: 10px">
             <input type="text" class="form-control" name="txnDate" id="txnDate" value="<%=data.get(0).get(5)%>" readonly="true">
         </div>
+        <label class="col-lg-2">Order No.</label>
+        <div class="col-lg-10" style="margin-bottom: 10px">
+            <input type="text" class="form-control" name="address" id="orderNo" value="<%=orderNo%>" readonly="true">
+        </div>
+        <label class="col-lg-2">PMI No.</label>
+        <div class="col-lg-10" style="margin-bottom: 10px">
+            <input type="text" class="form-control" name="address" id="pmiNo" value="<%=pmiNo%>" readonly="true">
+        </div>        
         <label class="col-lg-2">Name</label>
         <div class="col-lg-10" style="margin-bottom: 10px">
             <input type="text" class="form-control" name="patientName" id="patientName" value="<%=data.get(0).get(0)%>" readonly="true">
@@ -170,7 +178,7 @@
         <tr>
             <td><%=dataItem.get(0).get(1)%></td>
             <td><%=dataItem.get(0).get(2)%></td>
-            <td style="text-align: right;">1</td>
+            <td style="text-align: right;">1.00</td>
             <td style="text-align: right;"><%=df.format(Double.parseDouble(dataItem.get(0).get(4)))%></td>
             <td style="text-align: right;"><%=df.format(Double.parseDouble(dataItem.get(0).get(4)))%></td>
         </tr>
@@ -235,23 +243,99 @@
         }
     }
 %>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="text-align: right;"><b>Grand Total</b></td>
+            <td id="grandTotal" style="text-align: right;"><%=df.format(grandTotal)%></td>
+        </tr>
             </tbody>
         </table>
     </div>
 </div>
         
 <div>
-        <div class="col-lg-8 pull-left" style="margin-bottom: 10px; ">
+        <div class="col-lg-4 pull-left" style="margin-bottom: 10px; ">
             <button id="cancel" class="btn btn-warning" style="float: left;">Cancel</button>
         </div>
-        <div class="col-lg-4 pull-right" style="margin-bottom: 10px; ">
-            <button id="payment" class="btn btn-success" style="float: right;">Confirm</button>
-            <button id="addItem" class="btn btn-success" style="float: right; margin-right: 10px;">Add Item</button>
-            <button id="confirm" class="btn btn-info" style="float: right; margin-right: 10px;">Payment</button>
+        <div class="col-lg-8 pull-right" style="margin-bottom: 10px; ">
+            <button id="back" class="btn btn-success" style="float: right;" disabled="true">Back</button>
+            <button id="confirm" class="btn btn-success" style="float: right; margin-right: 10px;" >Confirm</button>
+            <button id="addItem" class="btn btn-success" style="float: right; margin-right: 10px;" disabled="true">Add Item</button>
+            <button id="payment" class="btn btn-info" style="float: right; margin-right: 10px;" disabled="true">Payment</button>
         </div>
 </div>
 
 <script type="text/javascript">
     $(document).ready(function(){
+        $('#cancel').click(function(){
+            location.reload();
+        });
+        
+        $('#back').click(function(){
+            location.reload();
+        });
+        
+        $('#confirm').click(function(){
+            var orderNo = document.getElementById('orderNo').value;
+            var pmiNo = document.getElementById('pmiNo').value;
+            var billNo = document.getElementById('billNo').value;
+            var txnDate = document.getElementById('txnDate').value;
+            var patientName = document.getElementById('patientName').value;
+            var grandTotal = document.getElementById('grandTotal').innerHTML;
+            var tableItem;
+            tableItem = new Array();
+
+            $('#tableItems tr').each(function(row, tr){
+                tableItem[row]={
+                    "itemCode" : $(tr).find('td:eq(0)').text()
+                    , "itemDesc" : $(tr).find('td:eq(1)').text()
+                    , "itemQty" : $(tr).find('td:eq(2)').text()
+                    , "unitPrice" : $(tr).find('td:eq(3)').text()
+                    , "totalPrice" : $(tr).find('td:eq(4)').text()
+                };    
+            }); 
+            tableItem.shift();  // first row will be empty - so remove
+            tableItem = JSON.stringify(tableItem);
+            
+            $.ajax({
+                url: "saveGenerateBill.jsp",
+                type: "post",
+                data: {
+                    pmiNo: pmiNo,
+                    billNo: billNo,
+                    orderNo: orderNo,
+                    txnDate: txnDate,
+                    patientName: patientName,
+                    tableItem: tableItem,
+                    grandTotal: grandTotal
+                },
+                timeout: 10000,
+                success: function(data) {
+                    var d = data.split("|");
+                    if (d[1] == 1){
+                        $('#confirm').prop('disabled', true);
+                        $('#cancel').prop('disabled', true);
+                        $('#addItem').prop('disabled', false);
+                        $('#payment').prop('disabled', false);
+                        $('#back').prop('disabled', false);
+                        alert(d[2]);
+                    } else {
+                        alert(d[2]);
+                    }
+                },
+                error: function(err) {
+                }
+            });
+        });
+        
+        $('#addItem').click(function(){
+            
+        });
+        
+        $('#payment').click(function(){
+            
+        });
     });
 </script>
