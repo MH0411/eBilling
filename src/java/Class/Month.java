@@ -43,6 +43,13 @@ public class Month {
     }
     
     /**
+     * @param month the month to set
+     */
+    public void setMonth(String month) {
+        this.month = month;
+    }
+    
+    /**
      * Find month credit
      */
     public void determineCreditMonth(){
