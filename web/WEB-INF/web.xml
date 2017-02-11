@@ -4,9 +4,17 @@
         <servlet-name>PdfServlet</servlet-name>
         <servlet-class>Class.PdfServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Receipt</servlet-name>
+        <servlet-class>Class.Receipt</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PdfServlet</servlet-name>
         <url-pattern>/PdfServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Receipt</servlet-name>
+        <url-pattern>/Receipt</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

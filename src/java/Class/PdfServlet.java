@@ -30,9 +30,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import dbConn.Conn;
-import java.awt.Desktop;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 /**
