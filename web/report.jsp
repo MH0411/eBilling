@@ -34,16 +34,16 @@
                             <div class="form-group" >
                                 <label class="col-lg-2">Patient IC No.</label>
                                 <div class="col-lg-10" style="margin-bottom: 10px">
-                                    <input id="patientIC" type="number" class="form-control" name="patientIC" placeholder="IC No.">
+                                    <input id="patientIC" type="text" class="form-control" placeholder="IC No.">
                                 </div>
                                 <label class="col-lg-2">Year</label>
                                 <div class="col-lg-10" style="margin-bottom: 10px">
-                                    <select id="year" class="form-control" name="year"></select>
+                                    <select id="year" class="form-control"></select>
                                 </div>
                                 <label class="col-lg-2">Month</label>
                                 <div class="col-lg-10" style="margin-bottom: 10px">
-                                    <select id="month" class="form-control" name="month">
-                                        <option value="0" selected="true">Please select a month</option>
+                                    <select id="month" class="form-control">
+                                        <option value="0" selected="true">All Month</option>
                                         <option value="1">January</option>
                                         <option value="2">February</option>
                                         <option value="3">March</option>
@@ -58,7 +58,7 @@
                                         <option value="12">December</option>
                                     </select>
                                 </div>
-                                <label class="col-lg-2"></label>
+                                <label class="col-lg-2">Select a statement</label>
                                 <div class="col-lg-10 pull-right" style="margin-bottom: 10px">
                                     <button id="yearlyStatement" class="btn btn-info" style="margin-bottom: 10px">Customer Yearly Account Statement</button><br>
                                     <button id="detailsStatement" class="btn btn-info" style="margin-bottom: 10px">Customer Details Account Statement</button><br>
@@ -86,6 +86,12 @@
             }
             
             $(document).ready(function(){
+                $('#patientIC').keypress(function(event) {
+                    if ((event.which != 46 || $(this).val().indexOf('.') != 1) && (event.which < 48 || event.which > 57) && event.which != 8) {
+                        event.preventDefault();
+                    }
+                });              
+              
               $('#yearlyStatement').click(function(){
                   var ic = document.getElementById('ic').value;
                   var year = document.getElementById('year').value;
@@ -126,32 +132,22 @@
                   var month = document.getElementById('month').value;
                   
                   if (month.length !== 2){          
-                        month = "0" + month;;
+                        month = "0" + month;
                   }
                     
                   if (ic === "") {
                       alert('Please fill in patient IC No.');
                   } else {
-                      $.ajax({
-                          url: "generateReport.jsp",
-                          type: "post",
-                          data: {
-                              action:'detailsStatement',
-                              ic: ic,
-                              year:year,
-                              month:month
-                          },
-                          timeout: 10000,
-                          success: function(data) {
-                                var d = data.split("|");
-                                if (d[1] == '1') {
-                                 } else {
-                                     alert(d[1]);
-                                 }
-                          },
-                          error: function(err) {
-                          }
-                      });
+                      
+                        var url = "/eBilling/PdfServlet?"
+                        var action = "detailsStatement";
+                        url += "action=" + action;
+                        url += "&ic=" + ic;
+                        url += "&year=" + year;
+                        url += "&month=" + month;
+                        
+                        var win = window.open(url, '_blank');
+                        win.focus();
                     }
                 });
                 
@@ -174,11 +170,11 @@
                           },
                           timeout: 10000,
                           success: function(data) {
-                                var d = data.split("|");
-                                if (d[1] == '1') {
-                                 } else {
-                                     alert(d[1]);
-                                 }
+//                                var d = data.split("|");
+//                                if (d[1] == '1') {
+//                                 } else {
+//                                     alert(d[1]);
+//                                 }
                           },
                           error: function(err) {
                           }
