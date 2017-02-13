@@ -194,22 +194,40 @@
 </div>
 
 <div class="modal" id="addItemList" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-body">
+            <div class="modal-header">
+                <ul class="nav nav-tabs col-md-12 custom-bullet">
+                    <li class="active"><a data-toggle="tab" href="#tabMiscItem">Miscellaneous Item</a></li>
+                    <li><a data-toggle="tab" href="#tabDrugsItem">Drugs Item</a></li>
+                </ul>
+            </div>
+            <div class="modal-body scrollable-modal-body">
                 <div class="sd-tabs sd-tab-interaction">
                     <div class="row">
-                        <ul class="nav nav-tabs col-md-12 custom-bullet">
-                            <li class="active"><a data-toggle="tab" href="#tabMiscItem">Miscellaneous Item</a></li>
-                            <li><a data-toggle="tab" href="#tabDrugsItem">Drugs Item</a></li>
-                        </ul>
                         <div class="tab-content col-md-12">
                             <div id="tabMiscItem" class="tab-pane active">
                                 <!-- Misc Item -->
+                                <div id="custom-search-input" style="margin-top: 10px;">
+                                    <div class="input-group ">
+                                        <input id="searchMiscItem" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchMiscItem()"/>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-success pull-right">Search</button>
+                                        </span>
+                                    </div>
+                                </div>
                                 <div id="miscItem" ></div>
                             </div>
                             <div id="tabDrugsItem" class="tab-pane">
                                 <!-- Drugs Item -->
+                                <div id="custom-search-input" style="margin-top: 10px;">
+                                    <div class="input-group ">
+                                        <input id="searchDrugsItem" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchDrugsItem()"/>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-success pull-right">Search</button>
+                                        </span>
+                                    </div>
+                                </div>
                                 <div id="drugsItem" ></div>
                             </div>
                         </div>
@@ -226,17 +244,49 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript">
+        function searchDrugsItem() {
+            // Declare variables
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("searchDrugsItem");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("drugsItem");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function searchMiscItem() {
+            // Declare variables
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("searchMiscItem");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("miscItem");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
     $(document).ready(function(){
-        $("#addItemList tbody tr").click( function( e ) {
-            if ( $(this).hasClass('row_selected') ) {
-                $(this).removeClass('row_selected');
-            }
-            else {
-                oTable.$('tr.row_selected').removeClass('row_selected');
-                $(this).addClass('row_selected');
-            }
-        });
-        
         $('#txnDate').val('<%=dataBill.get(0).get(0)%>');
         
         $('#amtReceived').keypress(function(event) {
@@ -293,13 +343,11 @@
                 }
             });
         });
-<%}} else {%>
-    
-        $('#openItemList').click(function (){
-            $('#miscItem').load('tableMiscellaneous.jsp');
-            $('#drugsItem').load('tableDrugsItem.jsp');
+<%}%>
+        $('#openItemList').click(function(){
+            $('#miscItem').load('tableAddMiscItem.jsp');
+            $('#drugsItem').load('tableAddDrugsItem.jsp');
         });
-        
         $('#payment').click(function (){
             var subTotal = document.getElementById('subtotal').value;
             var grandTotal = document.getElementById('grandTotal').value;
@@ -339,6 +387,8 @@
                 });
             }
         });
+<%} else {%>
+
 <%}%>
     });
 </script>
