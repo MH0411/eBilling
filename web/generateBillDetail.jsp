@@ -263,10 +263,54 @@
             <button id="back" class="btn btn-success" style="float: right;" disabled="true">Back</button>
             <button id="confirm" class="btn btn-success" style="float: right; margin-right: 10px;" >Confirm</button>
             <button id="addItem" class="btn btn-success" style="float: right; margin-right: 10px;" disabled="true">Add Item</button>
-            <button id="payment" class="btn btn-info" style="float: right; margin-right: 10px;" disabled="true">Payment</button>
+            <button class="btn btn-success" data-toggle="modal" data-target="#makePayment" style="float: right; margin-right: 10px;">Payment</button>
         </div>
 </div>
-
+<div class="modal fade" id="makePayment" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Payment Calculator</h4>
+            </div>
+            
+            <div class="modal-body">
+                <label class="col-lg-4">Subtotal</label>
+                <div class="col-lg-8" style="margin-bottom: 10px">
+                    <input type="text" class="form-control" id="subtotal" value="<%=df.format(subtotal)%>" readonly="true" style="text-align: center;">
+                </div>
+                <label class="col-lg-4">Grand Total</label>
+                <div class="col-lg-8" style="margin-bottom: 10px">
+                    <input type="text" class="form-control" id="grandTotal" value="<%=df.format(grandTotal)%>" readonly="true" style="text-align: center;">
+                </div>
+                <label class="col-lg-4">Payment Method</label>
+                <div class="dropdown col-lg-8" style="margin-bottom: 10px">
+                    <button id="paymentMethod" class="btn btn-primary dropdown-toggle form-control" type="button" data-toggle="dropdown">Cash</button>
+                    <ul id="method" class="dropdown-menu">
+                        <li><a>Cash</a></li>
+                        <li><a>Credit Card</a></li>
+                        <li><a>Cheque</a></li>
+                    </ul>
+                </div>
+                <label class="col-lg-4">Amount Received</label>
+                <div class="col-lg-8" style="margin-bottom: 10px">
+                    <input type="text" class="form-control" id="amtReceived" value="" style="text-align: center;">
+                </div>
+                <label class="col-lg-4">Change</label>
+                <div class="col-lg-8" style="margin-bottom: 10px">
+                    <input type="text" class="form-control" id="change" value="" readonly="true" style="text-align: center;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="payment" type="button" class="btn btn-success" data-dismiss="modal">Make Payment</button>
+            </div>
+        </div>
+    </div>
+</div>
+                
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
         $('#cancel').click(function(){
@@ -334,8 +378,44 @@
             
         });
         
-        $('#payment').click(function(){
+        $('#payment').click(function (){
+            var subTotal = document.getElementById('subtotal').value;
+            var grandTotal = document.getElementById('grandTotal').value;
+            var amtReceived = document.getElementById('amtReceived').value;
+            var paymentMethod = document.getElementById('paymentMethod').innerHTML;
+            var custID = document.getElementById('custID').value;
+            var billNo = document.getElementById('billNo').value;
             
+            if (amtReceived == '0' || amtReceived == '.' || amtReceived == ''){
+                alert("Please insert an amount first.");
+            } else {
+                
+                $.ajax({
+                    url: "makePayment.jsp",
+                    type: "post",
+                    data: {
+                        subTotal: subTotal,
+                        grandTotal: grandTotal,
+                        amtReceived: amtReceived,
+                        paymentMethod: paymentMethod,
+                        custID: custID,
+                        billNo: billNo
+                    },
+                    timeout: 10000,
+                    success: function(data) {
+                       var d = data.split("|");
+                       if (d[1] == 1){
+                           alert(d[2]);
+                           location.reload();
+                       } else {
+                           alert(d[2]);
+                       }
+                    },
+                    error: function(err) {
+                        alert('Failed to make payment.\nPlease try again.');
+                    }
+                });
+            }
         });
     });
 </script>

@@ -57,7 +57,6 @@
         </div>
     </div>
 </div>
-        
 <div>
     <div id="listOfItems">
         <table id="tableItems" class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
@@ -104,7 +103,6 @@
         </table>
     </div>
 </div>
-        
 <div>
         <label class="col-lg-8"></label>
         <div class="col-lg-4 pull-right" style="margin-bottom: 10px; ">
@@ -112,13 +110,12 @@
     if (status.equalsIgnoreCase("unpaid")){
 %>
             <button class="btn btn-success" data-toggle="modal" data-target="#makePayment" style="float: right;">Payment</button>
-            <button id="addItem" class="btn btn-success" style="float: right; margin-right: 10px;">Add Item</button>
+            <button id="openItemList" class="btn btn-success modal-toggle" data-toggle="modal" data-target="#addItemList" style="float: right; margin-right: 10px;">Add Item</button>
 <%} else {%>
             <button id="print" class="btn btn-info" style="float: right;">Print Receipt</button>
 <%}%>
         </div>
 </div>
-
 <%
     double grandTotal = 0;
     double subtotal = 0;
@@ -196,10 +193,50 @@
     </div>
 </div>
 
+<div class="modal" id="addItemList" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="sd-tabs sd-tab-interaction">
+                    <div class="row">
+                        <ul class="nav nav-tabs col-md-12 custom-bullet">
+                            <li class="active"><a data-toggle="tab" href="#tabMiscItem">Miscellaneous Item</a></li>
+                            <li><a data-toggle="tab" href="#tabDrugsItem">Drugs Item</a></li>
+                        </ul>
+                        <div class="tab-content col-md-12">
+                            <div id="tabMiscItem" class="tab-pane active">
+                                <!-- Misc Item -->
+                                <div id="miscItem" ></div>
+                            </div>
+                            <div id="tabDrugsItem" class="tab-pane">
+                                <!-- Drugs Item -->
+                                <div id="drugsItem" ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="addItem" type="button" class="btn btn-success" data-dismiss="modal">Add Item</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
+        $("#addItemList tbody tr").click( function( e ) {
+            if ( $(this).hasClass('row_selected') ) {
+                $(this).removeClass('row_selected');
+            }
+            else {
+                oTable.$('tr.row_selected').removeClass('row_selected');
+                $(this).addClass('row_selected');
+            }
+        });
+        
         $('#txnDate').val('<%=dataBill.get(0).get(0)%>');
         
         $('#amtReceived').keypress(function(event) {
@@ -258,8 +295,9 @@
         });
 <%}} else {%>
     
-        $('#addItem').click(function (){
-            
+        $('#openItemList').click(function (){
+            $('#miscItem').load('tableMiscellaneous.jsp');
+            $('#drugsItem').load('tableDrugsItem.jsp');
         });
         
         $('#payment').click(function (){

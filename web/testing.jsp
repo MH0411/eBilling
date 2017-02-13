@@ -7,64 +7,61 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-            <!-- Bootstrap core CSS -->
-    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="./assets/css/style.css" rel="stylesheet">
-    <link href="./assets/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.css" rel="stylesheet">
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="./Dashboard_files/ie10-viewport-bug-workaround.css" rel="stylesheet">
-    
-    <!--custom CSS by author-->
-    <link href="./assets/css/custom.css" rel="stylesheet">
-        <style>
-/*        #myProgress {
-    position: relative;
-    width: 100%;
-    height: 30px;
-}
-#myBar {
-    position: absolute;
-    width: 0%;
-    height: 100%;
-    
-    #label {
-    text-align: center;  If you want to center it 
-    line-height: 30px;  Set the line-height to the same as the height of the progress bar container, to center it vertically 
-    color: white;
-}
-}*/
-</style>
-    </head>
+    <%@include file = "includes/header.html" %>
     <body>
-        <h1>Hello World!</h1>
-
-        <button onclick="move()">test</button>
-        <div id="myProgress" class="progress">
-  <div id="myBar" class="progress-bar">
-    <div id="label">0%</div>
-  </div>
-</div>
+<button id="openAddItem" type="button" class="btn btn-success modal-toggle" data-toggle="modal" data-target="#addItemList">Add Item</button>
+    <div class="modal" id="addItemList" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="sd-tabs sd-tab-interaction">
+                        <div class="row">
+                            <ul class="nav nav-tabs col-md-12 custom-bullet">
+                                <li class="active"><a data-toggle="tab" href="#tabMiscItem">Miscellaneous Item</a></li>
+                                <li><a data-toggle="tab" href="#tabDrugsItem">Drugs Item</a></li>
+                            </ul>
+                            <div class="tab-content col-md-12">
+                                <form id="tabMiscItem" class="tab-pane active" action="" method="post">
+                                    <!-- Misc Item -->
+                                    <div id="miscItem" ></div>
+                                </form>
+                                <!-- Drugs Item -->
+                                <form id="tabDrugsItem" class="tab-pane">
+                                    <!-- Mileage -->
+                                    <div id="drugsItem" ></div>
+                                </form>
+                                <!-- Mileage -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="addItem" type="button" class="btn btn-success" data-dismiss="modal">Add Item</button>
+                </div>
+            </div>
+        </div>
+    </div>
     </body>
-    <script type="text/javascript">
-        function move() {
-            var elem = document.getElementById("myBar"); 
-            var width = 0;
-            var id = setInterval(frame, 100);
-            var status = 50;
-            function frame() {
-                if (width >= status) {
-                    clearInterval(id);
-                } else {
-                    width++; 
-                    elem.style.width = width + '%'; 
-                    document.getElementById("label").innerHTML = width * 1 + '%';
-                }
+
+                
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#itemList tbody tr").click( function( e ) {
+            if ( $(this).hasClass('row_selected') ) {
+                $(this).removeClass('row_selected');
             }
-        }
-    </script>
+            else {
+                oTable.$('tr.row_selected').removeClass('row_selected');
+                $(this).addClass('row_selected');
+            }
+        });
+        
+        $('.modal-toggle').click(function (e) {
+            var tab = e.target.hash;
+            $('li > a[href="' + tab + '"]').tab("show");
+        });         
+    });
+</script>
 </html>
