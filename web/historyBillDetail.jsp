@@ -197,7 +197,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <ul class="nav nav-tabs col-md-12 custom-bullet">
+                <ul id="tabs" class="nav nav-tabs col-md-12 custom-bullet">
                     <li class="active"><a data-toggle="tab" href="#tabMiscItem">Miscellaneous Item</a></li>
                     <li><a data-toggle="tab" href="#tabDrugsItem">Drugs Item</a></li>
                 </ul>
@@ -235,56 +235,77 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="addItem" type="button" class="btn btn-success" data-dismiss="modal">Add Item</button>
+                <button id="addMiscItem" type="button" class="btn btn-success" data-dismiss="modal">Add Item</button>
             </div>
         </div>
     </div>
 </div>
-
+               
+<div class="modal fade" id="addQuantityModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Quantity to Add</h4>
+            </div>
+            
+            <div class="modal-body">
+                <label class="col-lg-4">Quantity</label>
+                <div class="col-lg-8" style="margin-bottom: 10px">
+                    <input type="text" class="form-control" id="quantity" value="" style="text-align: center;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="addDrugsItem" type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </d                
+                
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-        function searchDrugsItem() {
-            // Declare variables
-            var input, filter, table, tr, td, i;
-            input = document.getElementById("searchDrugsItem");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("drugsItem");
-            tr = table.getElementsByTagName("tr");
+    function searchDrugsItem() {
+        // Declare variables
+        var input, filter, table, tr, td, i;
+        input = document.getElementById("searchDrugsItem");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("drugsItem");
+        tr = table.getElementsByTagName("tr");
 
-            // Loop through all table rows, and hide those who don't match the search query
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[1];
-                if (td) {
-                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+                if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
                 }
             }
         }
+    }
 
-        function searchMiscItem() {
-            // Declare variables
-            var input, filter, table, tr, td, i;
-            input = document.getElementById("searchMiscItem");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("miscItem");
-            tr = table.getElementsByTagName("tr");
+    function searchMiscItem() {
+        // Declare variables
+        var input, filter, table, tr, td, i;
+        input = document.getElementById("searchMiscItem");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("miscItem");
+        tr = table.getElementsByTagName("tr");
 
-            // Loop through all table rows, and hide those who don't match the search query
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[1];
-                if (td) {
-                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+                if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
                 }
             }
         }
+    }
 
     $(document).ready(function(){
         $('#txnDate').val('<%=dataBill.get(0).get(0)%>');
@@ -348,6 +369,97 @@
             $('#miscItem').load('tableAddMiscItem.jsp');
             $('#drugsItem').load('tableAddDrugsItem.jsp');
         });
+        
+        $('#addMiscItem').click(function (){
+            var selected = $('.modal-body').find('.row_selected').text();
+            var activeTab = $('ul#tabs').find('li.active').text();
+            
+            if (selected == ''){
+                alert("Please select an item.");
+            } else {
+                var itemCode = $('#tableMisc').find(".row_selected td:nth-child(1)").text();
+                var itemName = $('#tableMisc').find(".row_selected td:nth-child(2)").text();
+                var unitPrice = $('#tableMisc').find(".row_selected td:nth-child(3)").text();
+                var custID = document.getElementById('custID').value;
+                var billNo = document.getElementById('billNo').value;
+                
+                if (activeTab == 'Miscellaneous Item'){
+                    $.ajax({
+                        url: "addBillItem.jsp",
+                        type: "post",
+                        data: {
+                            itemCode: itemCode,
+                            itemName: itemName,
+                            unitPrice: unitPrice,
+                            custID: custID,
+                            billNo: billNo,
+                            itemType: 'M'
+                        },
+                        timeout: 10000,
+                        success: function(data) {
+                           var d = data.split("|");
+                           if (d[1] == 1){
+                               alert(d[2]);
+                               location.reload();
+                           } else {
+                               alert(d[2]);
+                           }
+                        },
+                        error: function(err) {
+                            alert('Failed to make payment.\nPlease try again.');
+                        }
+                    });
+                    
+                } else if (activeTab == 'Drugs Item'){
+                    $('#addQuantityModal').modal('show');
+                } 
+            }
+        });
+        
+        $('#addDrugsItem').click(function (){
+            var quantity = document.getElementById('quantity').value;
+            var activeTab = $('ul#tabs').find('li.active').text();
+            
+            if (quantity == '' || quantity == 0){
+                alert("Please enter a quantity.");
+            } else {
+                var itemCode = $('#tableMisc').find(".row_selected td:nth-child(1)").text();
+                var itemName = $('#tableMisc').find(".row_selected td:nth-child(2)").text();
+                var unitPrice = $('#tableMisc').find(".row_selected td:nth-child(4)").text();
+                var custID = document.getElementById('custID').value;
+                var billNo = document.getElementById('billNo').value;
+                
+                if (activeTab == 'Miscellaneous Item'){
+                    $.ajax({
+                        url: "addBillItem.jsp",
+                        type: "post",
+                        data: {
+                            itemCode: itemCode,
+                            itemName: itemName,
+                            unitPrice: unitPrice,
+                            custID: custID,
+                            billNo: billNo,
+                            itemType: 'D',
+                            quantity: quantity
+                        },
+                        timeout: 10000,
+                        success: function(data) {
+                           var d = data.split("|");
+                           if (d[1] == 1){
+                               alert(d[2]);
+                               location.reload();
+                           } else {
+                               alert(d[2]);
+                           }
+                        },
+                        error: function(err) {
+                            alert('Failed to add item.\nPlease try again.');
+                        }
+                    });
+                }
+            }
+        });
+        
         $('#payment').click(function (){
             var subTotal = document.getElementById('subtotal').value;
             var grandTotal = document.getElementById('grandTotal').value;
