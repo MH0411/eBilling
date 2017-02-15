@@ -260,7 +260,8 @@
                 <button id="addDrugsItem" type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
             </div>
         </div>
-    </d                
+    </div>
+</div>
                 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -423,43 +424,47 @@
             if (quantity == '' || quantity == 0){
                 alert("Please enter a quantity.");
             } else {
-                var itemCode = $('#tableMisc').find(".row_selected td:nth-child(1)").text();
-                var itemName = $('#tableMisc').find(".row_selected td:nth-child(2)").text();
-                var unitPrice = $('#tableMisc').find(".row_selected td:nth-child(4)").text();
+                var itemCode = $('#tableDrugsItem').find(".row_selected td:nth-child(1)").text();
+                var itemName = $('#tableDrugsItem').find(".row_selected td:nth-child(2)").text();
+                var unitPrice = $('#tableDrugsItem').find(".row_selected td:nth-child(4)").text();
                 var custID = document.getElementById('custID').value;
                 var billNo = document.getElementById('billNo').value;
                 
-                if (activeTab == 'Miscellaneous Item'){
-                    $.ajax({
-                        url: "addBillItem.jsp",
-                        type: "post",
-                        data: {
-                            itemCode: itemCode,
-                            itemName: itemName,
-                            unitPrice: unitPrice,
-                            custID: custID,
-                            billNo: billNo,
-                            itemType: 'D',
-                            quantity: quantity
-                        },
-                        timeout: 10000,
-                        success: function(data) {
-                           var d = data.split("|");
-                           if (d[1] == 1){
-                               alert(d[2]);
-                               location.reload();
-                           } else {
-                               alert(d[2]);
-                           }
-                        },
-                        error: function(err) {
-                            alert('Failed to add item.\nPlease try again.');
-                        }
-                    });
-                }
+                $.ajax({
+                    url: "addBillItem.jsp",
+                    type: "post",
+                    data: {
+                        itemCode: itemCode,
+                        itemName: itemName,
+                        unitPrice: unitPrice,
+                        custID: custID,
+                        billNo: billNo,
+                        itemType: 'D',
+                        quantity: quantity
+                    },
+                    timeout: 10000,
+                    success: function(data) {
+                       var d = data.split("|");
+                       if (d[1] == 1){
+                           alert(d[2]);
+                           location.reload();
+                       } else {
+                           alert(d[2]);
+                       }
+                    },
+                    error: function(err) {
+                        alert('Failed to add item.\nPlease try again.');
+                    }
+                });
             }
         });
         
+        $('#quantity').keypress(function(event) {
+            if ((event.which != 46 || $(this).val().indexOf('.') != 1) && (event.which < 48 || event.which > 57) && event.which != 8) {
+                event.preventDefault();
+            }
+        });     
+                
         $('#payment').click(function (){
             var subTotal = document.getElementById('subtotal').value;
             var grandTotal = document.getElementById('grandTotal').value;

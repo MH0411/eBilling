@@ -262,7 +262,7 @@
         <div class="col-lg-8 pull-right" style="margin-bottom: 10px; ">
             <button id="back" class="btn btn-success" style="float: right;" disabled="true">Back</button>
             <button id="confirm" class="btn btn-success" style="float: right; margin-right: 10px;" >Confirm</button>
-            <button id="addItem" class="btn btn-success" style="float: right; margin-right: 10px;" disabled="true">Add Item</button>
+            <button id="openItemList" class="btn btn-success modal-toggle" data-toggle="modal" data-target="#addItemList" style="float: right; margin-right: 10px;">Add Item</button>
             <button class="btn btn-success" data-toggle="modal" data-target="#makePayment" style="float: right; margin-right: 10px;">Payment</button>
         </div>
 </div>
@@ -304,6 +304,76 @@
             </div>
             <div class="modal-footer">
                 <button id="payment" type="button" class="btn btn-success" data-dismiss="modal">Make Payment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="addItemList" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <ul id="tabs" class="nav nav-tabs col-md-12 custom-bullet">
+                    <li class="active"><a data-toggle="tab" href="#tabMiscItem">Miscellaneous Item</a></li>
+                    <li><a data-toggle="tab" href="#tabDrugsItem">Drugs Item</a></li>
+                </ul>
+            </div>
+            <div class="modal-body scrollable-modal-body">
+                <div class="sd-tabs sd-tab-interaction">
+                    <div class="row">
+                        <div class="tab-content col-md-12">
+                            <div id="tabMiscItem" class="tab-pane active">
+                                <!-- Misc Item -->
+                                <div id="custom-search-input" style="margin-top: 10px;">
+                                    <div class="input-group ">
+                                        <input id="searchMiscItem" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchMiscItem()"/>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-success pull-right">Search</button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div id="miscItem" ></div>
+                            </div>
+                            <div id="tabDrugsItem" class="tab-pane">
+                                <!-- Drugs Item -->
+                                <div id="custom-search-input" style="margin-top: 10px;">
+                                    <div class="input-group ">
+                                        <input id="searchDrugsItem" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchDrugsItem()"/>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-success pull-right">Search</button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div id="drugsItem" ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="addMiscItem" type="button" class="btn btn-success" data-dismiss="modal">Add Item</button>
+            </div>
+        </div>
+    </div>
+</div>
+               
+<div class="modal fade" id="addQuantityModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Quantity to Add</h4>
+            </div>
+            
+            <div class="modal-body">
+                <label class="col-lg-4">Quantity</label>
+                <div class="col-lg-8" style="margin-bottom: 10px">
+                    <input type="text" class="form-control" id="quantity" value="" style="text-align: center;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="addDrugsItem" type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
             </div>
         </div>
     </div>
@@ -374,9 +444,104 @@
             });
         });
         
-        $('#addItem').click(function(){
-            
+        $('#openItemList').click(function(){
+            $('#miscItem').load('tableAddMiscItem.jsp');
+            $('#drugsItem').load('tableAddDrugsItem.jsp');
         });
+        
+        $('#addMiscItem').click(function (){
+            var selected = $('.modal-body').find('.row_selected').text();
+            var activeTab = $('ul#tabs').find('li.active').text();
+            
+            if (selected == ''){
+                alert("Please select an item.");
+            } else {
+                var itemCode = $('#tableMisc').find(".row_selected td:nth-child(1)").text();
+                var itemName = $('#tableMisc').find(".row_selected td:nth-child(2)").text();
+                var unitPrice = $('#tableMisc').find(".row_selected td:nth-child(3)").text();
+                var custID = document.getElementById('custID').value;
+                var billNo = document.getElementById('billNo').value;
+                
+                if (activeTab == 'Miscellaneous Item'){
+                    $.ajax({
+                        url: "addBillItem.jsp",
+                        type: "post",
+                        data: {
+                            itemCode: itemCode,
+                            itemName: itemName,
+                            unitPrice: unitPrice,
+                            custID: custID,
+                            billNo: billNo,
+                            itemType: 'M'
+                        },
+                        timeout: 10000,
+                        success: function(data) {
+                           var d = data.split("|");
+                           if (d[1] == 1){
+                               alert(d[2]);
+                               location.reload();
+                           } else {
+                               alert(d[2]);
+                           }
+                        },
+                        error: function(err) {
+                            alert('Failed to make payment.\nPlease try again.');
+                        }
+                    });
+                    
+                } else if (activeTab == 'Drugs Item'){
+                    $('#addQuantityModal').modal('show');
+                } 
+            }
+        });
+        
+        $('#addDrugsItem').click(function (){
+            var quantity = document.getElementById('quantity').value;
+            var activeTab = $('ul#tabs').find('li.active').text();
+            
+            if (quantity == '' || quantity == 0){
+                alert("Please enter a quantity.");
+            } else {
+                var itemCode = $('#tableDrugsItem').find(".row_selected td:nth-child(1)").text();
+                var itemName = $('#tableDrugsItem').find(".row_selected td:nth-child(2)").text();
+                var unitPrice = $('#tableDrugsItem').find(".row_selected td:nth-child(4)").text();
+                var custID = document.getElementById('custID').value;
+                var billNo = document.getElementById('billNo').value;
+                
+                $.ajax({
+                    url: "addBillItem.jsp",
+                    type: "post",
+                    data: {
+                        itemCode: itemCode,
+                        itemName: itemName,
+                        unitPrice: unitPrice,
+                        custID: custID,
+                        billNo: billNo,
+                        itemType: 'D',
+                        quantity: quantity
+                    },
+                    timeout: 10000,
+                    success: function(data) {
+                       var d = data.split("|");
+                       if (d[1] == 1){
+                           alert(d[2]);
+                           location.reload();
+                       } else {
+                           alert(d[2]);
+                       }
+                    },
+                    error: function(err) {
+                        alert('Failed to add item.\nPlease try again.');
+                    }
+                });
+            }
+        });
+        
+        $('#quantity').keypress(function(event) {
+            if ((event.which != 46 || $(this).val().indexOf('.') != 1) && (event.which < 48 || event.which > 57) && event.which != 8) {
+                event.preventDefault();
+            }
+        });     
         
         $('#payment').click(function (){
             var subTotal = document.getElementById('subtotal').value;

@@ -64,7 +64,8 @@
         String sql4 = "INSERT into far_customer_dtl (txn_date, item_cd, item_desc, item_amt, quantity, bill_no, customer_id) "
         + "VALUES('"+ txnDate +"', '"+ itemCode +"','"+ name +"','"+ priceBeforeTax +"','"+ 1 +"','"+ billNo +"','"+ custId +"')";
         ;
-
+        Conn.setData(sql4);
+        
         updateCustomerBillParameter(billingParameters, billNo, amount);
 
         //Get current bill_amt and add item price;
@@ -87,6 +88,7 @@
         Conn.setData(sql6);
 
         String infoMessage = "Selected item added to bill successfully.";
+        out.print("-|1|" + infoMessage);
 
     } else if (itemType.equalsIgnoreCase("D")) {
     
@@ -123,7 +125,7 @@
         }
 
         currentDebit = String.valueOf(Double.parseDouble(currentDebit) + totalPrice);
-
+        
         //Update customer ledger
         String sql3 = "UPDATE far_customer_ledger "
                 + "SET "+ month.getDebitMonth() +" = '"+ currentDebit +"', txn_date = '"+ txnDate +"' "
@@ -157,6 +159,7 @@
         Conn.setData(sql6);
 
         String infoMessage = "Selected item added to bill successfully.";
+        out.print("-|1|" + infoMessage);
     }
 %>
 <%!
