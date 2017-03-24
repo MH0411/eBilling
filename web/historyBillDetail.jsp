@@ -4,7 +4,7 @@
     Author     : Mike Ho
 --%>
 
-<%@page import="dbConn.Conn"%>
+<%@page import="dbConn1.Conn"%>
 <%@page import="java.text.DecimalFormat"%>
 <%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -18,7 +18,7 @@
             "SELECT patient_name, home_address, new_ic_no, id_no, mobile_phone "
             + "FROM pms_patient_biodata "
             + "WHERE pmi_no = '" + custID + "'";
-    ArrayList<ArrayList<String>> dataPatient = dbConn.Conn.getData(query1);
+    ArrayList<ArrayList<String>> dataPatient = Conn.getData(query1);
 %>
 <div style="margin-bottom: 50px">
     <h4><b>Bill Detail</b></h4>
@@ -59,7 +59,7 @@
 </div>
 <div>
     <div id="listOfItems">
-        <table id="tableItems" class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
+        <table id="tableItems" class="table table-filter table-striped table-bordered">
             <thead>
                 <th>Transaction Date</th>
                 <th>Item Code</th>
@@ -67,7 +67,11 @@
                 <th style="text-align: right;">Item Quantity</th>
                 <th style="text-align: right;">Unit Price (RM)</th>
                 <th style="text-align: right;">Total Amount (RM)</th>
-                <th><th>
+<%
+            if (status.equalsIgnoreCase("unpaid")){
+%>
+                <th></th>
+<%}%>
             </thead>
             <tbody>
 <%
@@ -75,7 +79,7 @@
                 "SELECT txn_date, item_cd, item_desc, quantity, item_amt/quantity, item_amt "
                 + "FROM far_customer_dtl "
                 + "WHERE bill_no = '"+ billNo +"' ";
-        ArrayList<ArrayList<String>> dataBill = dbConn.Conn.getData(query2);
+        ArrayList<ArrayList<String>> dataBill = Conn.getData(query2);
 
         if (!dataBill.isEmpty()){
 
@@ -95,7 +99,7 @@
                     <button id="delete<%=i%>" class="btn btn-danger pull-right" type="button">Delete</button>
                 </td>
 <%} else {%>
-                <td></td>
+<!--                <td></td>-->
 <%}%>
             </tr>
 <%}}%>
@@ -209,23 +213,24 @@
                             <div id="tabMiscItem" class="tab-pane active">
                                 <!-- Misc Item -->
                                 <div id="custom-search-input" style="margin-top: 10px;">
-                                    <div class="input-group ">
-                                        <input id="searchMiscItem" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchMiscItem()"/>
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-success pull-right">Search</button>
-                                        </span>
+                                    <div class="form-group ">
+                                        <label class="col-md-4 control-label" for="textinput">Enter Item Name to Filter</label>
+                                        <div class="col-md-4">
+                                            <input id="searchMiscItem" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchMiscItem()"/>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="miscItem" ></div>
                             </div>
+
                             <div id="tabDrugsItem" class="tab-pane">
                                 <!-- Drugs Item -->
                                 <div id="custom-search-input" style="margin-top: 10px;">
-                                    <div class="input-group ">
-                                        <input id="searchDrugsItem" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchDrugsItem()"/>
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-success pull-right">Search</button>
-                                        </span>
+                                    <div class="form-group ">
+                                        <label class="col-md-4 control-label" for="textinput">Enter Item Name to Filter</label>
+                                        <div class="col-md-4">
+                                            <input id="searchDrugsItem" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchDrugsItem()"/>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="drugsItem" ></div>
@@ -262,9 +267,10 @@
         </div>
     </div>
 </div>
-                
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+               
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> 
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
 <script type="text/javascript">
     function searchDrugsItem() {
         // Declare variables
@@ -309,10 +315,16 @@
     }
 
     $(document).ready(function(){
+        
+        var contextPath = '<%=request.getContextPath()%>';
+        
         $('#txnDate').val('<%=dataBill.get(0).get(0)%>');
         
         $('#amtReceived').keypress(function(event) {
-            if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57) && event.which != 8) {
+            if (((event.which != 46 || $(this).val().indexOf('.') != -1) 
+                    && (event.which < 48 || event.which > 57) 
+                    || ($(this).val().length > 8)) 
+                    && event.which != 8 ) {
                 event.preventDefault();
             }
         });
@@ -357,15 +369,19 @@
                 },
                 timeout: 10000,
                 success: function(data) {
-                    alert('Success delete data');
-                     $tr.remove();
+                    document.getElementById('messageHeader').innerHTML = "Success!";
+                    document.getElementById('messageContent').innerHTML = "Success delete item.";
+                    $tr.remove();
+                    $("#alertMessage").modal();
                 },
                 error: function(err) {
-                    alert('Failed to delete the item.');
+                    document.getElementById('messageHeader').innerHTML = "Error!";
+                    document.getElementById('messageContent').innerHTML = "Failed to delete the item.";
+                    $("#alertMessage").modal();
                 }
             });
         });
-<%}%>
+<%          }%>
         $('#openItemList').click(function(){
             $('#miscItem').load('tableAddMiscItem.jsp');
             $('#drugsItem').load('tableAddDrugsItem.jsp');
@@ -400,14 +416,41 @@
                         success: function(data) {
                            var d = data.split("|");
                            if (d[1] == 1){
-                               alert(d[2]);
-                               location.reload();
+                                document.getElementById('messageHeader').innerHTML = "Success!";
+                                document.getElementById('messageContent').innerHTML = d[2];
+                                $("#alertMessage").modal();
+                               
+                                var row = 
+                                        '<tr>\n\
+                                            <td></td>\n\
+                                            <td>'+ itemCode +'</td>\n\
+                                            <td>'+ itemName +'</td>\n\
+                                            <td style="text-align: right;">1</td>\n\
+                                            <td style="text-align: right;">'+ unitPrice +'</td>\n\
+                                            <td style="text-align: right;">'+ unitPrice +'</td>\n\
+                                            <td></td>\n\
+                                        </tr>';
+                               $('#tableItems tr:last').after(row);
+                               
+                                var subTotal = parseFloat(document.getElementById('subtotal').value);
+                                var grandTotal = parseFloat(document.getElementById('grandTotal').value);
+                            
+                                subTotal = subTotal + parseFloat(unitPrice);
+                                grandTotal = grandTotal + parseFloat(d[3]);
+
+                                $('#subtotal').val(subTotal.toFixed(2));
+                                $('#grandTotal').val(grandTotal.toFixed(2));
+                               
                            } else {
-                               alert(d[2]);
+                                document.getElementById('messageHeader').innerHTML = "Failed!";
+                                document.getElementById('messageContent').innerHTML = d[2];
+                                $("#alertMessage").modal();
                            }
                         },
                         error: function(err) {
-                            alert('Failed to make payment.\nPlease try again.');
+                            document.getElementById('messageHeader').innerHTML = "Error!";
+                            document.getElementById('messageContent').innerHTML = "Failed to make payment.\nPlease try again.";
+                            $("#alertMessage").modal();
                         }
                     });
                     
@@ -419,7 +462,6 @@
         
         $('#addDrugsItem').click(function (){
             var quantity = document.getElementById('quantity').value;
-            var activeTab = $('ul#tabs').find('li.active').text();
             
             if (quantity == '' || quantity == 0){
                 alert("Please enter a quantity.");
@@ -446,14 +488,43 @@
                     success: function(data) {
                        var d = data.split("|");
                        if (d[1] == 1){
-                           alert(d[2]);
-                           location.reload();
+                            document.getElementById('messageHeader').innerHTML = "Success!";
+                            document.getElementById('messageContent').innerHTML = d[2];
+                            $("#alertMessage").modal();
+                           
+                           var totalPrice = quantity * unitPrice;
+                           
+                            var row = 
+                                    '<tr>\n\
+                                        <td></td>\n\
+                                        <td>'+ itemCode +'</td>\n\
+                                        <td>'+ itemName +'</td>\n\
+                                        <td style="text-align: right;">'+ quantity +'</td>\n\
+                                        <td style="text-align: right;">'+ unitPrice +'</td>\n\
+                                        <td style="text-align: right;">'+ totalPrice.toFixed(2) +'</td>\n\
+                                        <td></td>\n\
+                                    </tr>';
+                           $('#tableItems tr:last').after(row);
+
+                            var subTotal = parseFloat(document.getElementById('subtotal').value);
+                            var grandTotal = parseFloat(document.getElementById('grandTotal').value);
+                            
+                            subTotal = subTotal + totalPrice;
+                            grandTotal = grandTotal + parseFloat(d[3]);
+
+                            $('#subtotal').val(subTotal.toFixed(2));
+                            $('#grandTotal').val(grandTotal.toFixed(2));
+
                        } else {
-                           alert(d[2]);
+                            document.getElementById('messageHeader').innerHTML = "Failed!";
+                            document.getElementById('messageContent').innerHTML = d[2];
+                            $("#alertMessage").modal();
                        }
                     },
                     error: function(err) {
-                        alert('Failed to add item.\nPlease try again.');
+                        document.getElementById('messageHeader').innerHTML = "Error!";
+                        document.getElementById('messageContent').innerHTML = "Failed to add item.\nPlease try again.";
+                        $("#alertMessage").modal();
                     }
                 });
             }
@@ -472,6 +543,7 @@
             var paymentMethod = document.getElementById('paymentMethod').innerHTML;
             var custID = document.getElementById('custID').value;
             var billNo = document.getElementById('billNo').value;
+            var change = document.getElementById('change').value;
             
             if (amtReceived == '0' || amtReceived == '.' || amtReceived == ''){
                 alert("Please insert an amount first.");
@@ -492,20 +564,87 @@
                     success: function(data) {
                        var d = data.split("|");
                        if (d[1] == 1){
-                           alert(d[2]);
+                            document.getElementById('messageHeader').innerHTML = "Success!";
+                            document.getElementById('messageContent').innerHTML = d[2];
+                            $("#alertMessage").modal();
+                           
+                            var url = contextPath + "/Receipt?"
+                            url += "&custID=" + custID;
+                            url += "&billNo=" + billNo;
+                            url += "&subtotal=" + d[3];
+                            url += "&grandTotal=" + d[4];
+                            url += "&amount=" + d[5];
+                            url += "&change=" + change;
+                            url += "&gst=" + d[6];
+                            url += "&serviceCharge=" + d[7];
+                            url += "&discount=" + d[8];
+                            url += "&rounding=" + d[9];
+
+                            var win = window.open(url, '_blank');
+                            win.focus();
+                           
                            location.reload();
                        } else {
-                           alert(d[2]);
+                            document.getElementById('messageHeader').innerHTML = "Failed!";
+                            document.getElementById('messageContent').innerHTML = d[2];
+                            $("#alertMessage").modal();
                        }
                     },
                     error: function(err) {
-                        alert('Failed to make payment.\nPlease try again.');
+                        document.getElementById('messageHeader').innerHTML = "Error!";
+                        document.getElementById('messageContent').innerHTML = "Failed to make payment.\nPlease try again.";
+                        $("#alertMessage").modal();
                     }
                 });
             }
         });
 <%} else {%>
+        
+        $('#print').click(function(){
+            var custID = document.getElementById('custID').value;
+            var billNo = document.getElementById('billNo').value;
+            
+            $.ajax({
+                url: "printPaidReceipt.jsp",
+                type: "post",
+                data: {
+                    custID: custID,
+                    billNo: billNo
+                },
+                timeout: 10000,
+                success: function(data) {
+                   var d = data.split("|");
+                   if (d[1] == 1){
 
+                        var url = contextPath + "/Receipt?"
+                        url += "&custID=" + custID;
+                        url += "&billNo=" + billNo;
+                        url += "&subtotal=" + d[3];
+                        url += "&grandTotal=" + d[4];
+                        url += "&amount=" + "0.00";
+                        url += "&change=" + "0.00";
+                        url += "&gst=" + d[6];
+                        url += "&serviceCharge=" + d[7];
+                        url += "&discount=" + d[8];
+                        url += "&rounding=" + d[9];
+                        
+                        var win = window.open(url, '_blank');
+                        win.focus();
+
+                       location.reload();
+                   } else {
+                        document.getElementById('messageHeader').innerHTML = "Failed!";
+                        document.getElementById('messageContent').innerHTML = d[2];
+                        $("#alertMessage").modal();
+                   }
+                },
+                error: function(err) {
+                    document.getElementById('messageHeader').innerHTML = "Error!";
+                    document.getElementById('messageContent').innerHTML = "Failed to print.\nPlease try again.";
+                    $("#alertMessage").modal();
+                }
+            });            
+        });
 <%}%>
     });
 </script>

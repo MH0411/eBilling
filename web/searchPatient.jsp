@@ -6,7 +6,7 @@
 
 <%@page import="java.util.Date"%>
 <%@page import="java.text.SimpleDateFormat"%>
-<%@page import="dbConn.Conn"%>
+<%@page import="dbConn1.Conn"%>
 <%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
@@ -29,7 +29,7 @@
                 + "INNER JOIN pms_patient_biodata pb "
                 + "ON ec.PMI_NO = pb.PMI_NO "
                 + "WHERE (ec.status = 1 OR ec.status = 3) "
-                + "AND pe.STATUS ='Discharge' "
+                //+ "AND pe.STATUS ='Discharge' "
                 + "AND pom.episode_code like '"+ strDate1 +" %' " 
                 + "AND pe.episode_date like '"+ strDate1 +" %' "
                 + "AND pb.new_ic_no = '"+ ic +"' "
@@ -39,7 +39,7 @@
                 + "GROUP BY pom.order_no";
     ArrayList<ArrayList<String>> data = Conn.getData(sql);
 %>
-<table class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
+<table class="table table-filter table-striped table-bordered">
     <thead>
         <th>Episode Date</th>
         <th>Order No</th>
@@ -67,7 +67,10 @@
             <td><%=data.get(i).get(7)%></td>
             <td><button id="generate<%=i%>" class="btn btn-success pull-right">Generate Bill</button></td>
         </tr>
-        <%}}%>
+        <%}}
+else {
+    out.print("|-1|There are no records found.");
+}%>
     </tbody>
 </table>
     <script type="text/javascript">

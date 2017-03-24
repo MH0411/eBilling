@@ -55,7 +55,7 @@ public class Month {
     public void determineCreditMonth(){
         
         //Check current month
-        if (null != getMonth()) {
+        if (!getMonth().equals(null)) {
             switch (getMonth()) {
                 case "01":
                     creditMonth = "cr_amt_1";
@@ -105,7 +105,7 @@ public class Month {
     public void determineDebitMonth(){
         
         //Check current month
-        if (null != getMonth()) {
+        if (!getMonth().equals(null)) {
             switch (getMonth()) {
                 case "01":
                     debitMonth = "dr_amt_1";
@@ -176,6 +176,40 @@ public class Month {
                     return "-11-";
                 case "December":
                     return "-12-";
+                default:
+                    return null;
+            }
+        }
+        return null;
+    }
+    
+    public static String getFullLetterMonth(String digitMonth) {
+        if (month != null) {
+            switch (month) {
+                case "01":
+                    return "January";
+                case "02":
+                   return "February";
+                case "03":
+                    return "March";
+                case "04":
+                    return "April";
+                case "05":
+                    return "May";
+                case "06":
+                    return  "June";
+                case "07":
+                    return "July";
+                case "08":
+                    return "August";
+                case "09":
+                    return "September";
+                case "10":
+                    return "October";
+                case "11":
+                    return "November";
+                case "12":
+                    return "December";
                 default:
                     return null;
             }

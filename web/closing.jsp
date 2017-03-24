@@ -5,68 +5,67 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@include file="../Entrance/validateSession.jsp" %>
 <!DOCTYPE html>
 <html>
-    <%@include file = "includes/header.html" %>
+    <%@include file = "includes/header.jsp" %>
     <body>
         <div class="container-fluid">
-            <%@include file = "includes/topMenu.html" %>
-            <div class="row">
-                <div class="col-lg-2">                
-                    <div id="cssmenu">
-                        <ul>
-                            <li><a href="index.jsp"><span>Billing</span></a></li>
-                            <li><a href="bill.jsp"><span>Manage Bill</span></a></li>
-                            <li><a href="miscellaneous.jsp"><span>Miscellaneous</span></a></li>
-                            <li><a href="parameter.jsp"><span>Bill Parameter</span></a></li>
-                            <li><a href="report.jsp"><span>Report</span></a></li>
-                            <li class="active"><a href="closing.jsp"><span>Closing</span></a></li>
-                        </ul>
-                    </div>   
-                </div>
-        
-                <!--body-->
-                <div class="col-lg-10">
-                    <div id="message"></div>
-                    <div id="reportDetails" class="thumbnail">
-                        <div style="margin-bottom: 250px">
-                            <h4>Year End Processing</h4>
-                            
-                            <div class="col-lg-10" style="margin-bottom: 20px">
-                                <div id="backup" class="progress">
-                                    <div id="backupPB" class="progress-bar">
-                                        <div id="percentBackup"></div>
+            <div class="row">      
+            <%@include file = "includes/sideMenus.jsp" %>
+                <!-- main -->		
+
+                <div class=" main" style="background: #f2f4f8;">
+                    
+                <%@include file = "includes/topMenu.html" %>
+                    <div class="row">
+                        <!--body-->
+                        <div class="col-md-12">
+                            <div id="message"></div>
+                            <div id="reportDetails" class="thumbnail">
+                                <div style="margin-bottom: 250px">
+                                    <h4>Year End Processing</h4>
+
+                                    <div class="col-md-12" style="margin-bottom: 20px">
+                                        <div id="backup" class="progress">
+                                            <div id="backupPB" class="progress-bar">
+                                                <div id="percentBackup"></div>
+                                            </div>
+                                        </div>
+                                        <button id="btnBackup" type="submit" class="btn btn-info" >Backup Customer Data</button><br>
+                                    </div>
+
+                                    <div class="col-md-12" style="margin-bottom: 20px">
+                                        <div id="process" class="progress">
+                                            <div id="processPB" class="progress-bar">
+                                                <div id="percentProcess"></div>
+                                            </div>
+                                        </div>
+                                        <button id="btnProcess" type="submit" class="btn btn-info" disabled="true">Start Year End Processing</button><br>
+                                    </div>
+
+                                    <div class="col-md-12" style="margin-bottom: 20px">
+                                        <div id="restore" class="progress">
+                                            <div id="restorePB" class="progress-bar">
+                                                <div id="percentRestore"></div>
+                                            </div>
+                                        </div>
+                                        <button id="btnRestore" type="submit" class="btn btn-info" disabled="true">Restore Customer Data</button><br>
                                     </div>
                                 </div>
-                                <button id="btnBackup" type="submit" class="btn btn-info" >Backup Customer Data</button><br>
                             </div>
-                            
-                            <div class="col-lg-10" style="margin-bottom: 20px">
-                                <div id="process" class="progress">
-                                    <div id="processPB" class="progress-bar">
-                                        <div id="percentProcess"></div>
-                                    </div>
-                                </div>
-                                <button id="btnProcess" type="submit" class="btn btn-info" disabled="true">Start Year End Processing</button><br>
-                            </div>
-                            
-                            <div class="col-lg-10" style="margin-bottom: 20px">
-                                <div id="restore" class="progress">
-                                    <div id="restorePB" class="progress-bar">
-                                        <div id="percentRestore"></div>
-                                    </div>
-                                </div>
-                                <button id="btnRestore" type="submit" class="btn btn-info" disabled="true">Restore Customer Data</button><br>
-                            </div>
-                            
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
             
-        <!--js-->
+        <%@include file = "includes/message.html" %>    
+        <!--js--> 
         <script src="assets/js/jquery.min.js" type="text/javascript"></script>
         <script src="assets/js/custom.js" type="text/javascript"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> 
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script type="text/javascript">
             $(document).ready(function(){
                 $('#btnBackup').click(function(){
@@ -95,7 +94,11 @@
                                 function frame() {
                                     if (width >= status) {
                                         clearInterval(id);
-                                        alert(d[2]);
+                                        
+                                        document.getElementById('messageHeader').innerHTML = "Success!";
+                                        document.getElementById('messageContent').innerHTML = d[2];
+                                        $("#alertMessage").modal();
+                                        
                                         if(month == "11" || month == "12" || month == "01"){
                                             $('#btnProcess').prop('disabled', false);
                                         }
@@ -106,10 +109,15 @@
                                     }
                                 }
                              } else {
-                                 alert(d[2]);
+                                document.getElementById('messageHeader').innerHTML = "Failed!";
+                                document.getElementById('messageContent').innerHTML = d[2];
+                                $("#alertMessage").modal();
                              }
                         },
                         error: function(err) {
+                            document.getElementById('messageHeader').innerHTML = "Error!";
+                            document.getElementById('messageContent').innerHTML = "Failed to backup customer data.\nPlease try again.";
+                            $("#alertMessage").modal();
                         }
                     });
                 });
@@ -136,7 +144,11 @@
                                 function frame() {
                                     if (width >= status) {
                                         clearInterval(id);
-                                        alert(d[2]);
+                                        
+                                        document.getElementById('messageHeader').innerHTML = "Success!";
+                                        document.getElementById('messageContent').innerHTML = d[2];
+                                        $("#alertMessage").modal();
+                                        
                                     } else {
                                         width++; 
                                         elem.style.width = width + '%'; 
@@ -144,11 +156,16 @@
                                     }
                                 }
                              } else {
-                                 alert(d[2]);
-                                 $('#btnRestore').prop('disabled', false);
+                                document.getElementById('messageHeader').innerHTML = "Failed!";
+                                document.getElementById('messageContent').innerHTML = d[2];
+                                $("#alertMessage").modal();
+                                $('#btnRestore').prop('disabled', false);
                              }
                         },
                         error: function(err) {
+                            document.getElementById('messageHeader').innerHTML = "Error!";
+                            document.getElementById('messageContent').innerHTML = "Processing failed.";
+                            $("#alertMessage").modal();
                         }
                     });
                 });      
@@ -172,7 +189,11 @@
                                 function frame() {
                                     if (width >= status) {
                                         clearInterval(id);
-                                        alert(d[2]);
+                                        
+                                        document.getElementById('messageHeader').innerHTML = "Success!";
+                                        document.getElementById('messageContent').innerHTML = d[2];
+                                        $("#alertMessage").modal();
+                                        
                                         $('#btnProcess').prop('disabled', false);
                                     } else {
                                         width++; 
@@ -181,10 +202,15 @@
                                     }
                                 }
                              } else {
-                                 alert(d[2]);
+                                document.getElementById('messageHeader').innerHTML = "Failed!";
+                                document.getElementById('messageContent').innerHTML = d[2];
+                                $("#alertMessage").modal();
                              }
                         },
                         error: function(err) {
+                            document.getElementById('messageHeader').innerHTML = "Error!";
+                            document.getElementById('messageContent').innerHTML = "Restore failed.\nPlease try again.";
+                            $("#alertMessage").modal();
                         }
                     });
                 });

@@ -7,7 +7,7 @@
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.Date"%>
 <%@page import="java.text.DateFormat"%>
-<%@page import="dbConn.Conn"%>
+<%@page import="dbConn1.Conn"%>
 <%@page import="java.text.DecimalFormat"%>
 <%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -136,7 +136,7 @@
         
 <div>
     <div id="listOfItems">
-        <table id="tableItems" class="table table-filter table-striped" style="background: #fff; border: 1px solid #ccc; border-top: none;">
+        <table id="tableItems" class="table table-filter table-striped table-bordered">
             <thead>
                 <th>Item Code</th>
                 <th>Item Description</th>
@@ -391,6 +391,15 @@
             location.reload();
         });
         
+        $('#amtReceived').keypress(function(event) {
+            if (((event.which != 46 || $(this).val().indexOf('.') != -1) 
+                    && (event.which < 48 || event.which > 57) 
+                    || ($(this).val().length > 8)) 
+                    && event.which != 8 ) {
+                event.preventDefault();
+            }
+        });        
+        
         $('#confirm').click(function(){
             var orderNo = document.getElementById('orderNo').value;
             var pmiNo = document.getElementById('pmiNo').value;
@@ -434,9 +443,14 @@
                         $('#addItem').prop('disabled', false);
                         $('#payment').prop('disabled', false);
                         $('#back').prop('disabled', false);
-                        alert(d[2]);
+                        
+                        document.getElementById('messageHeader').innerHTML = "Success!";
+                        document.getElementById('messageContent').innerHTML = "Bill created.";
+                        $("#alertMessage").modal();
                     } else {
-                        alert(d[2]);
+                        document.getElementById('messageHeader').innerHTML = "Error!";
+                        document.getElementById('messageContent').innerHTML = d[2];
+                        $("#alertMessage").modal();
                     }
                 },
                 error: function(err) {
@@ -454,7 +468,9 @@
             var activeTab = $('ul#tabs').find('li.active').text();
             
             if (selected == ''){
-                alert("Please select an item.");
+                document.getElementById('messageHeader').innerHTML = "Warning!";
+                document.getElementById('messageContent').innerHTML = "Please select an item.";
+                $("#alertMessage").modal();
             } else {
                 var itemCode = $('#tableMisc').find(".row_selected td:nth-child(1)").text();
                 var itemName = $('#tableMisc').find(".row_selected td:nth-child(2)").text();
@@ -478,14 +494,40 @@
                         success: function(data) {
                            var d = data.split("|");
                            if (d[1] == 1){
-                               alert(d[2]);
-                               location.reload();
+                                var row = 
+                                        '<tr>\n\
+                                            <td></td>\n\
+                                            <td>'+ itemCode +'</td>\n\
+                                            <td>'+ itemName +'</td>\n\
+                                            <td style="text-align: right;">1</td>\n\
+                                            <td style="text-align: right;">'+ unitPrice +'</td>\n\
+                                            <td style="text-align: right;">'+ unitPrice +'</td>\n\
+                                            <td></td>\n\
+                                        </tr>';
+                               $('#tableItems tr:last').after(row);
+                               
+                                var subTotal = parseFloat(document.getElementById('subtotal').value);
+                                var grandTotal = parseFloat(document.getElementById('grandTotal').value);
+                            
+                                subTotal = subTotal + parseFloat(unitPrice);
+                                grandTotal = grandTotal + parseFloat(d[3]);
+                                
+                                $('#subtotal').val(subTotal.toFixed(2));
+                                $('#grandTotal').val(grandTotal.toFixed(2));
+                               
+                                document.getElementById('messageHeader').innerHTML = "Success!";
+                                document.getElementById('messageContent').innerHTML = d[2];
+                                $("#alertMessage").modal();
                            } else {
-                               alert(d[2]);
+                                document.getElementById('messageHeader').innerHTML = "Error!";
+                                document.getElementById('messageContent').innerHTML = d[2];
+                                $("#alertMessage").modal();
                            }
                         },
                         error: function(err) {
-                            alert('Failed to make payment.\nPlease try again.');
+                            document.getElementById('messageHeader').innerHTML = "Error!";
+                            document.getElementById('messageContent').innerHTML = "Failed to add item.";
+                            $("#alertMessage").modal();
                         }
                     });
                     
@@ -496,11 +538,15 @@
         });
         
         $('#addDrugsItem').click(function (){
+            
+            var contextPath = '<%=request.getContextPath()%>';
+            
             var quantity = document.getElementById('quantity').value;
-            var activeTab = $('ul#tabs').find('li.active').text();
             
             if (quantity == '' || quantity == 0){
-                alert("Please enter a quantity.");
+                document.getElementById('messageHeader').innerHTML = "Warning!";
+                document.getElementById('messageContent').innerHTML = "Please enter a quantity.";
+                $("#alertMessage").modal();
             } else {
                 var itemCode = $('#tableDrugsItem').find(".row_selected td:nth-child(1)").text();
                 var itemName = $('#tableDrugsItem').find(".row_selected td:nth-child(2)").text();
@@ -524,14 +570,43 @@
                     success: function(data) {
                        var d = data.split("|");
                        if (d[1] == 1){
-                           alert(d[2]);
-                           location.reload();
+                           
+                           var totalPrice = quantity * unitPrice;
+                           
+                            var row = 
+                                    '<tr>\n\
+                                        <td></td>\n\
+                                        <td>'+ itemCode +'</td>\n\
+                                        <td>'+ itemName +'</td>\n\
+                                        <td style="text-align: right;">'+ quantity +'</td>\n\
+                                        <td style="text-align: right;">'+ unitPrice +'</td>\n\
+                                        <td style="text-align: right;">'+ totalPrice.toFixed(2) +'</td>\n\
+                                        <td></td>\n\
+                                    </tr>';
+                           $('#tableItems tr:last').after(row);
+
+                            var subTotal = parseFloat(document.getElementById('subtotal').value);
+                            var grandTotal = parseFloat(document.getElementById('grandTotal').value);
+                            
+                            subTotal = subTotal + totalPrice;
+                            grandTotal = grandTotal + parseFloat(d[3]);
+
+                            $('#subtotal').val(subTotal.toFixed(2));
+                            $('#grandTotal').val(grandTotal.toFixed(2));
+
+                            document.getElementById('messageHeader').innerHTML = "Success!";
+                            document.getElementById('messageContent').innerHTML = d[2];
+                            $("#alertMessage").modal();
                        } else {
-                           alert(d[2]);
+                            document.getElementById('messageHeader').innerHTML = "Error!";
+                            document.getElementById('messageContent').innerHTML = d[2];
+                            $("#alertMessage").modal();
                        }
                     },
                     error: function(err) {
-                        alert('Failed to add item.\nPlease try again.');
+                        document.getElementById('messageHeader').innerHTML = "Error!";
+                        document.getElementById('messageContent').innerHTML = "Failed to add item.";
+                        $("#alertMessage").modal();
                     }
                 });
             }
@@ -550,9 +625,12 @@
             var paymentMethod = document.getElementById('paymentMethod').innerHTML;
             var custID = document.getElementById('custID').value;
             var billNo = document.getElementById('billNo').value;
+            var change = document.getElementById('change').value;
             
             if (amtReceived == '0' || amtReceived == '.' || amtReceived == ''){
-                alert("Please insert an amount first.");
+                document.getElementById('messageHeader').innerHTML = "Warning!";
+                document.getElementById('messageContent').innerHTML = "Please enter an amount first.";
+                $("#alertMessage").modal();
             } else {
                 
                 $.ajax({
@@ -570,14 +648,36 @@
                     success: function(data) {
                        var d = data.split("|");
                        if (d[1] == 1){
-                           alert(d[2]);
+                            var url = contextPath + "/Receipt?"
+                            url += "&custID=" + custID;
+                            url += "&billNo=" + billNo;
+                            url += "&subtotal=" + d[3];
+                            url += "&grandTotal=" + d[4];
+                            url += "&amount=" + d[5];
+                            url += "&change=" + change;
+                            url += "&gst=" + d[6];
+                            url += "&serviceCharge=" + d[7];
+                            url += "&discount=" + d[8];
+                            url += "&rounding=" + d[9];
+
+                            var win = window.open(url, '_blank');
+                            win.focus();
+                           
                            location.reload();
+                           
+                            document.getElementById('messageHeader').innerHTML = "Success!";
+                            document.getElementById('messageContent').innerHTML = d[2];
+                            $("#alertMessage").modal();
                        } else {
-                           alert(d[2]);
+                            document.getElementById('messageHeader').innerHTML = "Error!";
+                            document.getElementById('messageContent').innerHTML = d[2];
+                            $("#alertMessage").modal();
                        }
                     },
                     error: function(err) {
-                        alert('Failed to make payment.\nPlease try again.');
+                        document.getElementById('messageHeader').innerHTML = "Error!";
+                        document.getElementById('messageContent').innerHTML = "Failed to make payment.";
+                        $("#alertMessage").modal();
                     }
                 });
             }

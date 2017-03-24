@@ -5,17 +5,16 @@
  */
 package Class;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import dbConn.Conn;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import dbConn1.Conn;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -53,6 +52,8 @@ public class Receipt extends HttpServlet {
     private String discount = "0.00";
     private String rounding = "0.00";
     
+    private String userID = "";
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -66,17 +67,18 @@ public class Receipt extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
-        receiptNo = request.getParameter("receiptNo");
         custId = request.getParameter("custID");
         billNo = request.getParameter("billNo");
         subtotal = request.getParameter("subtotal");
         grandTotal = request.getParameter("grandTotal");
-        amount = request.getParameter("amt");
+        amount = request.getParameter("amount");
         change = request.getParameter("change");
         gst = request.getParameter("gst");
         serviceCharge = request.getParameter("serviceCharge");
         discount = request.getParameter("discount");
         rounding = request.getParameter("rounding");
+        
+        userID = request.getSession().getAttribute("USER_ID").toString();
         
         printPaidBill(response);
     }
@@ -148,11 +150,11 @@ public class Receipt extends HttpServlet {
             receiptNo = tmpNum + date1;
 
             //initialize pdf
-            Font recti = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
-            Font rectem = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
-            Font rectemja = new Font(Font.FontFamily.COURIER, 12);
-            Font rectemjaBold = new Font(Font.FontFamily.COURIER, 12, Font.BOLD);
-            Font rectemjaBig = new Font(Font.FontFamily.COURIER, 16, Font.BOLD);
+            Font recti = new Font(Font.HELVETICA, 16, Font.BOLD);
+            Font rectem = new Font(Font.HELVETICA, 12, Font.BOLD);
+            Font rectemja = new Font(Font.COURIER, 12);
+            Font rectemjaBold = new Font(Font.COURIER, 12, Font.BOLD);
+            Font rectemjaBig = new Font(Font.COURIER, 16, Font.BOLD);
             
             //--------------------------table bill------------------------------------------>
             PdfPTable table = new PdfPTable(6);
@@ -166,10 +168,28 @@ public class Receipt extends HttpServlet {
             header.setTotalWidth(document.right() - document.left());
             
             //--------------------------table header------------------------------------------>
-            Image logo = Image.getInstance("logoUTeM/LogoJawiUTeM.png");
-            logo.scaleAbsolute(115, 50);
-
-            PdfPCell cell1 = new PdfPCell(logo);
+            String sql_getHFC = 
+                    "SELECT health_facility_code "
+                    + "FROM adm_user "
+                    + "WHERE user_id = '"+ userID +"'";
+            ArrayList<ArrayList<String>> userData = Conn.getData(sql_getHFC);
+            String hfc = userData.get(0).get(0);
+            
+            String sql_getHFAddr = 
+                    "SELECT hfc_name, address1, address2, address3 "
+                    + "FROM adm_health_facility "
+                    + "WHERE hfc_cd = '"+ hfc +"'";
+            ArrayList<ArrayList<String>> hfData = Conn.getData(sql_getHFAddr);
+            String hfName = hfData.get(0).get(0);
+            String hfAddr1 = hfData.get(0).get(1);
+            String hfAddr2 = hfData.get(0).get(2);
+            String hfAddr3 = hfData.get(0).get(3); 
+            
+//            String imgPath = getServletContext().getRealPath("/assets/img/LogoJawiUTeM.png");
+//            Image logo = Image.getInstance(imgPath);
+//            logo.scaleAbsolute(120, 60);
+//
+            PdfPCell cell1 = new PdfPCell();
             cell1.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell1.setBorder(Rectangle.NO_BORDER);
             cell1.setColspan(2);
@@ -177,10 +197,10 @@ public class Receipt extends HttpServlet {
             header.addCell(cell1);
             
             String addr = 
-                    " Universiti Teknikal Malaysia Melaka, \n"
-                    + " Hang Tuah Jaya, \n"
-                    + " 76100 Durian Tunggal, \n"
-                    + " Melaka, Malaysia.";
+                    " "+ hfName +", \n"
+                    + " "+ hfAddr1 +" \n"
+                    + " "+ hfAddr2 +","
+                    + " "+ hfAddr3;
             
             PdfPCell cellAddress = new PdfPCell(new Phrase(addr, rectemja));
             cellAddress.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -380,7 +400,7 @@ public class Receipt extends HttpServlet {
             cell81.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell81.setColspan(5);
             cell81.setBorder(Rectangle.TOP);
-            PdfPCell cell86 = new PdfPCell(new Phrase(String.valueOf(subtotal), rectemjaBold));
+            PdfPCell cell86 = new PdfPCell(new Phrase(df.format(Double.parseDouble(subtotal)), rectemjaBold));
             cell86.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell86.setBorder(Rectangle.TOP);
             total.addCell(cell81);
@@ -390,7 +410,7 @@ public class Receipt extends HttpServlet {
             cell91.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell91.setColspan(5);
             cell91.setBorder(Rectangle.NO_BORDER);
-            PdfPCell cell96 = new PdfPCell(new Phrase(String.valueOf(serviceCharge), rectemjaBold));
+            PdfPCell cell96 = new PdfPCell(new Phrase(df.format(Double.parseDouble(serviceCharge)), rectemjaBold));
             cell96.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell96.setBorder(Rectangle.NO_BORDER);
             total.addCell(cell91);
@@ -400,7 +420,7 @@ public class Receipt extends HttpServlet {
             cell101.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell101.setColspan(5);
             cell101.setBorder(Rectangle.NO_BORDER);
-            PdfPCell cell106 = new PdfPCell(new Phrase(String.valueOf(gst), rectemjaBold));
+            PdfPCell cell106 = new PdfPCell(new Phrase(df.format(Double.parseDouble(gst)), rectemjaBold));
             cell106.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell106.setBorder(Rectangle.NO_BORDER);
             total.addCell(cell101);
@@ -410,7 +430,7 @@ public class Receipt extends HttpServlet {
             cell111.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell111.setColspan(5);
             cell111.setBorder(Rectangle.NO_BORDER);
-            PdfPCell cell116 = new PdfPCell(new Phrase(String.valueOf(discount), rectemjaBold));
+            PdfPCell cell116 = new PdfPCell(new Phrase(df.format(Double.parseDouble(discount)), rectemjaBold));
             cell116.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell116.setBorder(Rectangle.NO_BORDER);
             total.addCell(cell111);
@@ -420,7 +440,7 @@ public class Receipt extends HttpServlet {
             cell121.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell121.setColspan(5);
             cell121.setBorder(Rectangle.NO_BORDER);
-            PdfPCell cell126 = new PdfPCell(new Phrase(String.valueOf(rounding), rectemjaBold));
+            PdfPCell cell126 = new PdfPCell(new Phrase(df.format(Double.parseDouble(rounding)), rectemjaBold));
             cell126.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell126.setBorder(Rectangle.NO_BORDER);
             total.addCell(cell121);
@@ -433,7 +453,7 @@ public class Receipt extends HttpServlet {
             cell131.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell131.setColspan(2);
             cell131.setBorder(Rectangle.TOP);
-            PdfPCell cell136 = new PdfPCell(new Phrase(String.valueOf(grandTotal), rectemjaBig));
+            PdfPCell cell136 = new PdfPCell(new Phrase(df.format(Double.parseDouble(grandTotal)), rectemjaBig));
             cell136.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell136.setBorder(Rectangle.TOP);
             total.addCell(cell130);
@@ -447,7 +467,7 @@ public class Receipt extends HttpServlet {
             cell141.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell141.setColspan(2);
             cell141.setBorder(Rectangle.TOP);
-            PdfPCell cell146 = new PdfPCell(new Phrase(String.valueOf(amount), rectemjaBold));
+            PdfPCell cell146 = new PdfPCell(new Phrase(df.format(Double.parseDouble(amount)), rectemjaBold));
             cell146.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell146.setBorder(Rectangle.TOP);
             total.addCell(cell140);
@@ -458,7 +478,7 @@ public class Receipt extends HttpServlet {
             cell151.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell151.setColspan(5);
             cell151.setBorder(Rectangle.NO_BORDER);
-            PdfPCell cell156 = new PdfPCell(new Phrase(String.valueOf(change), rectemjaBold));
+            PdfPCell cell156 = new PdfPCell(new Phrase(df.format(Double.parseDouble(change)), rectemjaBold));
             cell156.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell156.setBorder(Rectangle.NO_BORDER);
             total.addCell(cell151);

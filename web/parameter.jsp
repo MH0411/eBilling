@@ -4,101 +4,113 @@
     Author     : Mike Ho
 --%>
 
-<%@page import="dbConn.Conn"%>
+<%@page import="dbConn1.Conn"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.text.DecimalFormat"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@include file="../Entrance/validateSession.jsp" %>
+<%@include file="validateModuleAccess.jsp" %>
 <!DOCTYPE html>
 <html>
-    <%@include file = "includes/header.html" %>
+    <%@include file = "includes/header.jsp" %>
     <body>
         <div class="container-fluid">
-            <%@include file = "includes/topMenu.html" %>
-            <div class="row">
-                <div class="col-lg-2">
-                    <div id="cssmenu">
-                        <ul>
-                            <li><a href="index.jsp"><span>Billing</span></a></li>
-                            <li><a href="manage.jsp"><span>Manage Bill</span></a></li>
-                            <li><a href="miscellaneous.jsp"><span>Miscellaneous</span></a></li>
-                            <li class="active"><a href="parameter.jsp"><span>Bill Parameter</span></a></li>
-                            <li><a href="report.jsp"><span>Report</span></a></li>
-                            <li><a href="closing.jsp"><span>Closing</span></a></li>
-                        </ul>
-                    </div>
-                </div>
+            <div class="row">      
+            <%@include file = "includes/sideMenus.jsp" %>
+                <!-- main -->		
 
-                <!--body-->
-                <div class="col-lg-10">
-                    <div class="thumbnail">
-                        <div style="margin-bottom: 250px">
-                            <h4>Bill Parameter</h4>
-                            <div class="form-group">
-                                <div id="reload">
-                                    <div id="getID">
-                                        <%
-                                            String query1 ="SELECT MAX(param_code) FROM far_billing_parameter";
-                                            ArrayList<ArrayList<String>> data = Conn.getData(query1);
-                                            String itemCode = data.get(0).get(0);
-                                            itemCode = itemCode.replaceAll("[^0-9]", "");
-                                            itemCode = String.valueOf(Integer.parseInt(itemCode)+1);
+                <div class="main" style="background: #f2f4f8;">
+                    
+                <%@include file = "includes/topMenu.html" %>
+                    <div class="row">
+                        <!--body-->
+                        <div class="col-md-12">
+                            <div class="thumbnail">
+                                <div style="margin-bottom: 250px">
+                                    <h4><b>Bill Parameter</b></h4>
+                                    <div class="form-group">
+                                        <div id="reload">
+                                            <div id="getID">
+                                                <%
+                                                    String query1 ="SELECT MAX(param_code) FROM far_billing_parameter";
+                                                    ArrayList<ArrayList<String>> data = Conn.getData(query1);
+                                                    String itemCode = data.get(0).get(0);
+                                                    itemCode = itemCode.replaceAll("[^0-9]", "");
+                                                    itemCode = String.valueOf(Integer.parseInt(itemCode)+1);
 
-                                            String code = "BP";
-                                            for (int i = 0 ; itemCode.length() < 3 ; i++){
-                                                itemCode = "0" + itemCode;
-                                            }
-                                            code = code + itemCode;
-                                        %>
-                                        <label class="col-lg-2">Item Code</label>
+                                                    String code = "BP";
+                                                    for (int i = 0 ; itemCode.length() < 3 ; i++){
+                                                        itemCode = "0" + itemCode;
+                                                    }
+                                                    code = code + itemCode;
+                                                %>
+                                                <label class="col-lg-2">Item Code</label>
+                                                <div class="col-lg-10" style="margin-bottom: 10px">
+                                                    <input type="text" class="form-control" name="paraCode" id="paraCode" value="<%=code%>" readonly="true">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label class="col-lg-2">Item Name</label>
                                         <div class="col-lg-10" style="margin-bottom: 10px">
-                                            <input type="text" class="form-control" name="paraCode" id="paraCode" value="<%=code%>" readonly="true">
+                                          <input type="text" class="form-control" name="paraName" id="paraName">
+                                        </div>
+                                        <label class="col-lg-2">Value</label>
+                                        <div class="col-lg-10" style="margin-bottom: 10px">
+                                          <input type="text" class="form-control" name="value" id="value">
+                                        </div>
+                                        <label class="col-lg-2">Enabled</label>
+                                        <div class="col-sm-7 col-md-7" style="margin-bottom: 30px">
+                                                <div class="input-group">
+                                                        <div id="rbEnable" class="btn-group">
+                                                                <a class="btn btn-primary btn-sm active" data-toggle="enable" data-title="Y">YES</a>
+                                                                <a class="btn btn-primary btn-sm" data-toggle="enable" data-title="N">NO</a>
+                                                        </div>
+                                                        <input type="hidden" name="happy" id="enable">
+                                                </div>
+                                        </div>
+                                        <label class="col-lg-2"></label>
+                                        <div class="col-lg-10 pull-right" style="margin-bottom: 10px">
+                                            <button id="add" class="btn btn-success">
+                                                <i class=" fa fa-plus" style=" padding-right: 10px; padding-left: 10px;color: white;"></i>
+                                                Add
+                                            </button>
+                                            <button id="update" class="btn btn-success" disabled="true">
+                                                <i class="fa fa-pencil-square-o" style=" padding-right: 10px; padding-left: 10px;color: white;"></i>
+                                                Update
+                                            </button>
+                                            <button id="delete" class="btn btn-danger" disabled="true">
+                                                <i class="fa fa-times" style=" padding-right: 10px; padding-left: 10px;color: white;"></i>
+                                                Delete
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-                                <label class="col-lg-2">Item Name</label>
-                                <div class="col-lg-10" style="margin-bottom: 10px">
-                                  <input type="text" class="form-control" name="paraName" id="paraName">
-                                </div>
-                                <label class="col-lg-2">Value</label>
-                                <div class="col-lg-10" style="margin-bottom: 10px">
-                                  <input type="text" class="form-control" name="value" id="value">
-                                </div>
-                                <label class="col-lg-2">Enabled</label>
-                                <div class="col-sm-7 col-md-7" style="margin-bottom: 10px">
-                                        <div class="input-group">
-                                                <div id="rbEnable" class="btn-group">
-                                                        <a class="btn btn-primary btn-sm active" data-toggle="enable" data-title="Y">YES</a>
-                                                        <a class="btn btn-primary btn-sm" data-toggle="enable" data-title="N">NO</a>
-                                                </div>
-                                                <input type="hidden" name="happy" id="enable">
+                            </div>
+                            <div class = "thumbnail">
+                                <form class="form-horizontal" name="myForm">
+                                    <div id="custom-search-input">
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label" for="textinput">Enter Item Name to Filter</label>
+                                            <div class="col-md-4">
+                                                <input id="search" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchItem()"/>
+                                            </div>
                                         </div>
-                                </div>
-                                <label class="col-lg-2"></label>
-                                <div class="col-lg-10 pull-right" style="margin-bottom: 10px">
-                                    <button id="add" class="btn btn-success">Add</button>
-                                    <button id="update" class="btn btn-success" disabled="true">Update</button>
-                                    <button id="delete" class="btn btn-danger" disabled="true">Delete</button>
-                                </div>
-                            </div>
+                                    </div>
+                                </form>   
+                                <div id="billPara"></div>         
+                            </div>                
                         </div>
-                        <div id="custom-search-input">
-                            <div class="input-group ">
-                                <input id="search" type="text" class=" search-query form-control" placeholder="Item Name" onkeyup="searchItem()"/>
-                                <span class="input-group-btn">
-                                    <button class="btn btn-success pull-right">Search</button>
-                                </span>
-                            </div>
-                        </div>
-                        <div id="billPara"></div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <%@include file = "includes/message.html" %>    
         <!--js-->
         <script src="assets/js/jquery.min.js" type="text/javascript"></script>
         <script src="assets/js/custom.js" type="text/javascript"></script>
-
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> 
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
         <script type="text/javascript">
             function searchItem() {
                 // Declare variables
@@ -123,6 +135,15 @@
 
             $(document).ready(function(){
                 $('#billPara').load("tableParameter.jsp");
+                
+                $('#value').keypress(function(event) {
+                    if (((event.which != 46 || $(this).val().indexOf('.') != -1) 
+                            && (event.which < 48 || event.which > 57) 
+                            || ($(this).val().length > 8)) 
+                            && event.which != 8 ) {
+                        event.preventDefault();
+                    }
+                });
 
                 $('#rbEnable a').on('click', function(){
                     var sel = $(this).data('title');
@@ -140,7 +161,9 @@
                     enable = String(enable).toLowerCase();
 
                         if (paraName === "" || value === "") {
-                            alert("Please fill in empty fields.");
+                            document.getElementById('messageHeader').innerHTML = "Warning!";
+                            document.getElementById('messageContent').innerHTML = "Please fill in empty fields.";
+                            $("#alertMessage").modal();
                         } else {
                             $.ajax({
                                 url: "manageParameter.jsp",
@@ -163,8 +186,14 @@
                                         $('#enable').prop('value', 'Y');
                                         $('a[data-toggle="enable"]').not('[data-title="Y"]').removeClass('active').addClass('notActive');
                                         $('a[data-toggle="enable"][data-title="Y"]').removeClass('notActive').addClass('active');
+                                        
+                                        document.getElementById('messageHeader').innerHTML = "Success!";
+                                        document.getElementById('messageContent').innerHTML = "Data added successfully.";
+                                        $("#alertMessage").modal();
                                      } else {
-                                         alert(data);
+                                        document.getElementById('messageHeader').innerHTML = "Failed!";
+                                        document.getElementById('messageContent').innerHTML = "Failed to add data.";
+                                        $("#alertMessage").modal();
                                      }
                                 },
                                 error: function(err) {
@@ -180,7 +209,9 @@
                     enable = String(enable).toLowerCase();
 
                         if (paraName === "" || value === "") {
-                            alert("Please fill in empty fields.");
+                            document.getElementById('messageHeader').innerHTML = "Warning!";
+                            document.getElementById('messageContent').innerHTML = "Please fill in empty fields.";
+                            $("#alertMessage").modal();
                         } else {
                             $.ajax({
                                 url: "manageParameter.jsp",
@@ -203,8 +234,15 @@
                                         $('#enable').prop('value', 'Y');
                                         $('a[data-toggle="enable"]').not('[data-title="Y"]').removeClass('active').addClass('notActive');
                                         $('a[data-toggle="enable"][data-title="Y"]').removeClass('notActive').addClass('active');
+                                        
+                                        document.getElementById('messageHeader').innerHTML = "Success!";
+                                        document.getElementById('messageContent').innerHTML = "Data updated successfully.";
+                                        $("#alertMessage").modal();
+                                        
                                      } else {
-                                         alert(data);
+                                        document.getElementById('messageHeader').innerHTML = "Failed!";
+                                        document.getElementById('messageContent').innerHTML = "Failed to update data.";
+                                        $("#alertMessage").modal();
                                      }
                                 },
                                 error: function(err) {
@@ -226,8 +264,14 @@
                                 var d = data.split("|");
                                 if (d[1] == '1') {
                                     $('#billPara').load("tableParameter.jsp");
+                                    
+                                    document.getElementById('messageHeader').innerHTML = "Success!";
+                                    document.getElementById('messageContent').innerHTML = "Data deleted successfully.";
+                                    $("#alertMessage").modal();
                                  } else {
-                                     alert(d[1]);
+                                    document.getElementById('messageHeader').innerHTML = "Failed!";
+                                    document.getElementById('messageContent').innerHTML = d[2];
+                                    $("#alertMessage").modal();
                                  }
                                 $('#reload').load(location.href + " #getID");
                                 $('#paraName').val('');
