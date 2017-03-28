@@ -5,8 +5,8 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%--<%@include file="../Entrance/validateSession.jsp" %>
-<%@include file="validateModuleAccess.jsp" %>--%>
+<%@include file="../Entrance/validateSession.jsp" %>
+<%@include file="validateModuleAccess.jsp" %>
 <!DOCTYPE html>
 <html>
     <%@include file = "includes/header.jsp" %>
@@ -76,7 +76,6 @@
                 </div>
             </div>
         </div>
-        <%session.setAttribute("USER_ID", "DR001");%>
 
         <%@include file = "includes/message.html" %>    
         <!--js-->

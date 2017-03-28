@@ -163,9 +163,9 @@
 
     //Search and add miscellaneous item to table.
     String type = data.get(0).get(11);
-    if (type.equals("Matric No.")) {
+    if (type.equals("004")) {
         type = "RG00001";
-    } else if (type.equals("Staff No.")) {
+    } else if (type.equals("005")) {
         type = "RG00002";
     } else if (type.equals("Foreigner")) {
         type = "RG00003";

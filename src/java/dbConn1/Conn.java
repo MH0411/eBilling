@@ -81,7 +81,7 @@ public class Conn
         String host_server = "biocore-stag.utem.edu.my";
         int host_port = 1098;
         try {
-            host_port = 1099;
+            host_port = 1098;
         } catch (Exception e) {
         }
         
@@ -95,10 +95,10 @@ public class Conn
             boolean status = false;
 
     //        String host_db = Config.url_server;
-            String host_server = getIpCall().getProperty(STR_HOST);
+            String host_server = "biocore-stag.utem.edu.my";
             int host_port = 1098;
             try {
-                host_port = Integer.parseInt(getIpCall().getProperty(STR_PORT));
+                host_port = 1098;
             } catch (Exception e) {
             }
 
