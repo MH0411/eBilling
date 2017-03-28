@@ -3,8 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/MH0411/Desktop/eMedica/BillingScreen/eBilling/web/searchPatient.jsp</file>
-            <file>file:/C:/Users/MH0411/Desktop/eMedica/BillingScreen/eBilling/src/java/Class/Receipt.java</file>
+            <file>file:/C:/Users/Administrator/Desktop/eBilling/web/HIS080002.jsp</file>
+            <file>file:/C:/Users/Administrator/Desktop/eBilling/web/historyBillDetail.jsp</file>
+            <file>file:/C:/Users/Administrator/Desktop/eBilling/web/HIS080001.jsp</file>
+            <file>file:/C:/Users/Administrator/Desktop/eBilling/src/java/dbConn1/Conn.java</file>
+            <file>file:/C:/Users/Administrator/Desktop/eBilling/web/generateBillDetail.jsp</file>
         </group>
     </open-files>
 </project-private>
