@@ -28,6 +28,8 @@
                 + "ON pe.PMI_NO = ec.PMI_NO "
                 + "INNER JOIN pms_patient_biodata pb "
                 + "ON ec.PMI_NO = pb.PMI_NO "
+                + "INNER JOIN pis_dispense_master pdm "
+                + "ON pdm.order_no = pom.order_no "
                 + "WHERE (ec.status = 1 OR ec.status = 3) "
                 //+ "AND pe.STATUS ='Discharge' "
                 + "AND pom.episode_code like '"+ strDate1 +" %' " 

@@ -189,7 +189,7 @@ public class PdfServlet extends HttpServlet {
 
                 String sql_getHFC = 
                         "SELECT health_facility_code "
-                        + "FROM adm_user "
+                        + "FROM adm_users "
                         + "WHERE user_id = '"+ userID +"'";
                 ArrayList<ArrayList<String>> userData = Conn.getData(sql_getHFC);
                 String hfc = userData.get(0).get(0);
@@ -597,19 +597,19 @@ public class PdfServlet extends HttpServlet {
                     tableHeader.setLockedWidth(true);
                     tableHeader.setTotalWidth(document.right() - document.left());
                     
-//                    String sql_getHFC = 
-//                            "SELECT health_facility_code "
-//                            + "FROM adm_user "
-//                            + "WHERE user_id = '"+ userID +"'";
-//                    ArrayList<ArrayList<String>> userData = Conn.getData(sql_getHFC);
-//                    String hfc = userData.get(0).get(0);
-//
-//                    String sql_getHFAddr = 
-//                            "SELECT hfc_name, address1, address2, address3 "
-//                            + "FROM adm_health_facility "
-//                            + "WHERE hfc_cd = '"+ hfc +"'";
-//                    ArrayList<ArrayList<String>> hfData = Conn.getData(sql_getHFAddr);
-//                    String hfName = hfData.get(0).get(0);
+                    String sql_getHFC = 
+                            "SELECT health_facility_code "
+                            + "FROM adm_users "
+                            + "WHERE user_id = '"+ userID +"'";
+                    ArrayList<ArrayList<String>> userData = Conn.getData(sql_getHFC);
+                    String hfc = userData.get(0).get(0);
+
+                    String sql_getHFAddr = 
+                            "SELECT hfc_name, address1, address2, address3 "
+                            + "FROM adm_health_facility "
+                            + "WHERE hfc_cd = '"+ hfc +"'";
+                    ArrayList<ArrayList<String>> hfData = Conn.getData(sql_getHFAddr);
+                    String hfName = hfData.get(0).get(0);
             
 //                    String imgPath = getServletContext().getRealPath("/assets/img/LogoJawiUTeM.png");
 //                    Image logo = Image.getInstance(imgPath);
@@ -622,11 +622,11 @@ public class PdfServlet extends HttpServlet {
 //                    cellLogo.setLeading(15f, 0.3f);
 //                    tableHeader.addCell(cellLogo);
 
-//                    PdfPCell cellLocation = new PdfPCell(new Phrase(hfName, recti));
-//                    cellLocation.setHorizontalAlignment(Element.ALIGN_CENTER);
-//                    cellLocation.setBorder(Rectangle.NO_BORDER);
-//                    cellLocation.setColspan(4);
-//                    tableHeader.addCell(cellLocation);
+                    PdfPCell cellLocation = new PdfPCell(new Phrase(hfName, recti));
+                    cellLocation.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellLocation.setBorder(Rectangle.NO_BORDER);
+                    cellLocation.setColspan(4);
+                    tableHeader.addCell(cellLocation);
                     
                     PdfPCell cellAnnual1 = new PdfPCell(new Phrase("\nCustomer Details Account Statement\n"
                             + "for "+ fullLetterMonth +" of "+ year +"\n\n", recti));
@@ -904,7 +904,7 @@ public class PdfServlet extends HttpServlet {
                         
                         String sql_getHFC = 
                                 "SELECT health_facility_code "
-                                + "FROM adm_user "
+                                + "FROM adm_users "
                                 + "WHERE user_id = '"+ userID +"'";
                         ArrayList<ArrayList<String>> userData = Conn.getData(sql_getHFC);
                         String hfc = userData.get(0).get(0);
@@ -1148,7 +1148,7 @@ public class PdfServlet extends HttpServlet {
 
             String sql_getHFC = 
                     "SELECT health_facility_code "
-                    + "FROM adm_user "
+                    + "FROM adm_users "
                     + "WHERE user_id = '"+ userID +"'";
             ArrayList<ArrayList<String>> userData = Conn.getData(sql_getHFC);
             String hfc = userData.get(0).get(0);
