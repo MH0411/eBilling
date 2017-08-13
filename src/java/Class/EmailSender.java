@@ -5,12 +5,7 @@
  */
 package Class;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.util.Properties;
  
 import javax.activation.DataHandler;
@@ -96,9 +91,9 @@ public class EmailSender {
 
             //construct the mime message
             MimeMessage mimeMessage = new MimeMessage(session);
-            mimeMessage.setSender(iaSender);
+            mimeMessage.setFrom(iaSender);
             mimeMessage.setSubject(subject);
-            mimeMessage.setRecipient(Message.RecipientType.TO, iaRecipient);
+            mimeMessage.addRecipient(Message.RecipientType.TO, iaRecipient);
             
             //PDF Attachment
             if (baos != null){
@@ -159,14 +154,5 @@ public class EmailSender {
 //        document.add(paragraph);
 //         
 //        document.close();
-//    }
-//     
-//    /**
-//     * Main method.
-//     * @param args No args required.
-//     */
-//    public static void main(String[] args) {
-//        EmailWithPdf demo = new EmailWithPdf();
-//        demo.email();
 //    }
 }

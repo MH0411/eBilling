@@ -76,7 +76,7 @@ public class PdfServlet extends HttpServlet {
                 generateYearEndProcessingReport(response);
             }
         } catch(Exception e) {
-            throw new IOException(e.getMessage());
+            e.printStackTrace();
         }
     }
  
@@ -1120,6 +1120,15 @@ public class PdfServlet extends HttpServlet {
                         document.add(tableFooter);
                         document.newPage();
 
+                        if (email != null){
+                            EmailSender es = new EmailSender(
+                                    email,
+                                    "Details Account Statement",
+                                    "",
+                                    "DetailsStatement",
+                                    baos);
+                            es.email();
+                        }
                     }
                 }
             }catch (Exception e){

@@ -3,10 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/MH0411/Desktop/eBilling/web/generateBillDetail.jsp</file>
-            <file>file:/C:/Users/MH0411/Desktop/eBilling/web/saveGenerateBill.jsp</file>
-            <file>file:/C:/Users/MH0411/Desktop/eBilling/web/searchPatient.jsp</file>
-            <file>file:/C:/Users/MH0411/Desktop/eBilling/web/HIS080001.jsp</file>
+            <file>file:/C:/Users/MH0411/Desktop/eBilling/src/java/Class/EmailSender.java</file>
+            <file>file:/C:/Users/MH0411/Desktop/eBilling/src/java/Class/Receipt.java</file>
         </group>
     </open-files>
 </project-private>
