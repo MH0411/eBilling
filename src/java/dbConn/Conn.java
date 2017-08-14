@@ -24,6 +24,7 @@ public class Conn {
     
     public static ArrayList<ArrayList<String>> getData(String query) 
     {
+        
         RMIConnector rmic = new RMIConnector();
         ArrayList<ArrayList<String>> data = rmic.getQuerySQL(Conn.HOST, Conn.PORT, query);
         

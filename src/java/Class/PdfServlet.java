@@ -38,20 +38,20 @@ import javax.swing.JOptionPane;
  */
 public class PdfServlet extends HttpServlet {
              
-        private DecimalFormat df = new DecimalFormat("0.00");
-        private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy"); 
-        private DateFormat monthFormat = new SimpleDateFormat("MM");
-        private DateFormat yearFormat = new SimpleDateFormat("yyyy");
-        private Date date = new Date();
-        private String strCurrentDate = dateFormat.format(date);
-        private String strCurrentMon = monthFormat.format(date);
-        private String strCurrentYear = yearFormat.format(date);
-        private String action = "";
-        private String ic = "";
-        private String year = "";
-        private String month = "";
-        
-        private String userID = "";
+    private DecimalFormat df = new DecimalFormat("0.00");
+    private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy"); 
+    private DateFormat monthFormat = new SimpleDateFormat("MM");
+    private DateFormat yearFormat = new SimpleDateFormat("yyyy");
+    private Date date = new Date();
+    private String strCurrentDate = dateFormat.format(date);
+    private String strCurrentMon = monthFormat.format(date);
+    private String strCurrentYear = yearFormat.format(date);
+    private String action = "";
+    private String ic = "";
+    private String year = "";
+    private String month = "";
+
+    private String userID = "";
             
     /**
      * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)

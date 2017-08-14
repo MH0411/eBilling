@@ -557,7 +557,7 @@ public class Receipt extends HttpServlet {
             
             if (email != null){
                 EmailSender es = new EmailSender(
-                    "z.mike0411@gmail.com",//email
+                    email,//email
                     "Receipt",//subject
                     "Thank you. Wish you recover soon.",//message
                     "Receipt",//file name
