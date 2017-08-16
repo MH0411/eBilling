@@ -8,11 +8,10 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.text.DecimalFormat"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%--<%@include file="../Entrance/validateSession.jsp" %>--%>
-<%--<%@include file="validateModuleAccess.jsp" %>--%>
+<%@include file="../Entrance/validateSession.jsp" %>
+<%@include file="validateModuleAccess.jsp" %>
 <!DOCTYPE html>
 <html>
-    <%session.setAttribute("USER_ID", "DR001");%>
     <%@include file = "includes/header.jsp" %>
     <body>
         <div class="container-fluid">

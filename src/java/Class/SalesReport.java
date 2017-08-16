@@ -14,7 +14,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import dbConn.Conn;
+import dbConn1.Conn;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -42,9 +42,9 @@ public class SalesReport extends HttpServlet {
     private Font rectemjaBig = new Font(Font.COURIER, 16, Font.BOLD);
     private Date date = new Date();
     private DecimalFormat df = new DecimalFormat("0.00");
-    private String strDay = "";
-    private String strMon = "";
-    private String strYear = "2017";
+    private String strDay = null;
+    private String strMon = null;
+    private String strYear = null;
     private String userID = "";
     private String hfc_cd = "";
     
@@ -60,15 +60,14 @@ public class SalesReport extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-//        strDay = request.getParameter("day");
-//        strMon = request.getParameter("month");
-//        strDay = request.getParameter("year");
+        strDay = request.getParameter("day");
+        strMon = request.getParameter("month");
+        strYear = request.getParameter("year");
 //        userID = request.getSession().getAttribute("USER_ID").toString();
 //        hfc_cd = request.getSession().getAttribute("HEALTH_FACILITY_CODE").toString();
 
         String sql = "";
-        
-        if (!(strDay.isEmpty() || strMon.isEmpty() && strYear.isEmpty())){
+        if (!(strDay == null || strMon == null || strYear == null)){
             System.out.println(strDay.isEmpty());
             sql = "SELECT cd.item_cd, cd.item_desc, SUM(cd.quantity), SUM(cd.item_amt) "
                     + "FROM far_customer_dtl cd, far_customer_hdr ch "
@@ -79,7 +78,7 @@ public class SalesReport extends HttpServlet {
                     + "ORDER BY SUM(cd.quantity) DESC";
             generateDayOrMonthSalesReport(response, sql, "Daily");
             
-        } else if (!(strMon.isEmpty() || strYear.isEmpty())){
+        } else if (!(strMon == null || strYear == null)){
             sql = "SELECT cd.item_cd, cd.item_desc, cd.SUM(quantity), SUM(cd.item_amt) "
                     + "FROM far_customer_dtl cd, far_customer_hdr ch " 
                     + "WHERE cd.bill_no = ch.bill_no "
@@ -89,7 +88,7 @@ public class SalesReport extends HttpServlet {
                     + "ORDER BY SUM(cd.quantity) DESC";
             generateDayOrMonthSalesReport(response, sql, "Monthly");
             
-        } else if (!(strYear.isEmpty())){
+        } else if (!(strYear == null)){
             sql = "SELECT MONTHNAME(cd.txn_date), cd.item_cd, cd.item_desc, SUM(cd.quantity), SUM(cd.item_amt) "
                     + "FROM cd.far_customer_dtl, far_customer_hdr ch "
                     + "WHERE cd.bill_no = ch.bill_no "
@@ -144,17 +143,20 @@ public class SalesReport extends HttpServlet {
             cell31.setColspan(4);
             cell31.setBorder(Rectangle.NO_BORDER);
             
-            PdfPCell cell41 = new PdfPCell(new Phrase("Report Date : ", rectem));
+            String temp = "";
+            String reportDate = "";
+            if (strDay == null){
+                temp = "Month";
+                reportDate = Month.getFullLetterMonth(strMon) + " " + strYear + "\n\n";
+            } else{
+                temp = "Date";
+                reportDate = strDay + " " + Month.getFullLetterMonth(strMon) + " " + strYear + "\n\n";
+            }
+            
+            PdfPCell cell41 = new PdfPCell(new Phrase("Report " + temp + " : ", rectem));
             cell41.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell41.setColspan(1);
             cell41.setBorder(Rectangle.NO_BORDER);
-            
-            String reportDate = "";
-            if (strDay.isEmpty())
-                reportDate = Month.getFullLetterMonth(strMon) + " " + strYear + "\n\n";
-             else 
-                reportDate = strDay + " " + Month.getFullLetterMonth(strMon) + " " + strYear + "\n\n";
-            
             PdfPCell cell42 = new PdfPCell(new Phrase(reportDate, rectemja));
             cell42.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell42.setColspan(3);
