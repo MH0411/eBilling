@@ -40,10 +40,10 @@ public class SalesReport extends HttpServlet {
     private Font rectemja = new Font(Font.COURIER, 12);
     private Font rectemjaBold = new Font(Font.COURIER, 12, Font.BOLD);
     private Font rectemjaBig = new Font(Font.COURIER, 16, Font.BOLD);
-    
+    private Date date = new Date();
     private DecimalFormat df = new DecimalFormat("0.00");
     private String strDay = "";
-    private String strMon = "04";
+    private String strMon = "";
     private String strYear = "2017";
     private String userID = "";
     private String hfc_cd = "";
@@ -66,40 +66,42 @@ public class SalesReport extends HttpServlet {
 //        userID = request.getSession().getAttribute("USER_ID").toString();
 //        hfc_cd = request.getSession().getAttribute("HEALTH_FACILITY_CODE").toString();
 
-        
         String sql = "";
         
-        if (!(strDay.isEmpty() && strMon.isEmpty() && strYear.isEmpty())){
-            sql = "SELECT cl.item_cd, cl.item_desc, SUM(cl.quantity), SUM(cl.item_amt) "
-                    + "FROM far_customer_dtl cl, far_customer_hdr ch "
-                    + "WHERE DATE(cl.txn_date) = '" + strYear + "-" + strMon + "-" + strDay + "' "
+        if (!(strDay.isEmpty() || strMon.isEmpty() && strYear.isEmpty())){
+            System.out.println(strDay.isEmpty());
+            sql = "SELECT cd.item_cd, cd.item_desc, SUM(cd.quantity), SUM(cd.item_amt) "
+                    + "FROM far_customer_dtl cd, far_customer_hdr ch "
+                    + "WHERE cd.bill_no = ch.bill_no "
+                    + "AND DATE(cl.txn_date) = '" + strYear + "-" + strMon + "-" + strDay + "' "
                     //+ "AND ch.hfc_cd = '" + hfc_cd + "' "
-                    + "GROUP BY cl.item_cd "
-                    + "ORDER BY SUM(cl.quantity) DESC";
-            generateDayOrMonthSalesReport(response, sql);
+                    + "GROUP BY cd.item_cd "
+                    + "ORDER BY SUM(cd.quantity) DESC";
+            generateDayOrMonthSalesReport(response, sql, "Daily");
             
-        } else if (!(strMon.isEmpty() && strYear.isEmpty())){
-            sql = "SELECT item_cd, item_desc, SUM(quantity), SUM(item_amt) "
-                    + "FROM far_customer_dtl " 
-                    + "WHERE MONTH(txn_date) = '" + strMon + "' "
+        } else if (!(strMon.isEmpty() || strYear.isEmpty())){
+            sql = "SELECT cd.item_cd, cd.item_desc, cd.SUM(quantity), SUM(cd.item_amt) "
+                    + "FROM far_customer_dtl cd, far_customer_hdr ch " 
+                    + "WHERE cd.bill_no = ch.bill_no "
+                    + "AND MONTH(cd.txn_date) = '" + strMon + "' "
                     //+ "AND ch.hfc_cd = '" + hfc_cd + "' "
-                    + "GROUP BY item_cd " 
-                    + "ORDER BY SUM(quantity) DESC";
-            generateDayOrMonthSalesReport(response, sql);
+                    + "GROUP BY cd.item_cd " 
+                    + "ORDER BY SUM(cd.quantity) DESC";
+            generateDayOrMonthSalesReport(response, sql, "Monthly");
             
         } else if (!(strYear.isEmpty())){
-            sql = "SELECT MONTHNAME(txn_date), item_cd, item_desc, SUM(quantity), SUM(item_amt) "
-                    + "FROM far_customer_dtl "
-                    + "WHERE YEAR(txn_date) = '" + strYear + "' "
+            sql = "SELECT MONTHNAME(cd.txn_date), cd.item_cd, cd.item_desc, SUM(cd.quantity), SUM(cd.item_amt) "
+                    + "FROM cd.far_customer_dtl, far_customer_hdr ch "
+                    + "WHERE cd.bill_no = ch.bill_no "
+                    + "AND YEAR(cd.txn_date) = '" + strYear + "' "
                     //+ "AND ch.hfc_cd = '" + hfc_cd + "' "
-                    + "AND"
-                    + "GROUP BY item_cd "
-                    + "ORDER BY txn_date, SUM(quantity) DESC";
-            generateYearSalesReport(response, sql);
+                    + "GROUP BY cd.item_cd "
+                    + "ORDER BY cd.txn_date, SUM(cd.quantity) DESC";
+            generateYearSalesReport(response, sql, "Yearly");
         }
     }
     
-    private void generateDayOrMonthSalesReport(HttpServletResponse response, String sql){
+    private void generateDayOrMonthSalesReport(HttpServletResponse response, String sql, String reportType){
         try {   
             //Create and set PDF format
             Document document = new Document(PageSize.A4, 36, 36, 64, 36); 
@@ -108,15 +110,17 @@ public class SalesReport extends HttpServlet {
             PdfWriter writer = PdfWriter.getInstance(document, baos);
             document.open();
         
-            PdfPTable table = new PdfPTable(6);
-            table.setWidths(new float[]{0.5f, 1.5f, 4f, 1.5f, 1.5f, 1.5f});
-            table.setLockedWidth(true);
-            table.setTotalWidth(document.right() - document.left());
-            
+            //----------------------------table header--------------------------------------->
             PdfPTable header = new PdfPTable(4);
             header.setWidths(new float[]{3f, 4f, 3.5f, 4f});
             header.setLockedWidth(true);
             header.setTotalWidth(document.right() - document.left());
+
+            PdfPCell cellTitle = new PdfPCell(new Phrase(reportType + " Sales Report\n\n", recti));
+            cellTitle.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cellTitle.setBorder(Rectangle.NO_BORDER);
+            cellTitle.setColspan(4);
+            header.addCell(cellTitle);  
             
 //            String sql_getHFAddr = 
 //                    "SELECT hfc_name, address1, address2, address3 "
@@ -127,38 +131,108 @@ public class SalesReport extends HttpServlet {
 //            String hfAddr1 = hfData.get(0).get(1);
 //            String hfAddr2 = hfData.get(0).get(2);
 //            String hfAddr3 = hfData.get(0).get(3); 
+//            String addr = 
+//                    " "+ hfName +", \n"
+//                    + " "+ hfAddr1 +" \n"
+//                    + " "+ hfAddr2 +","
+//                    + " "+ hfAddr3;
+
+            String addr = "test1\ntest2\ntest3\ntest4\n\n";
             
+            PdfPCell cell31 = new PdfPCell(new Phrase(addr, rectemja));
+            cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell31.setColspan(4);
+            cell31.setBorder(Rectangle.NO_BORDER);
+            
+            PdfPCell cell41 = new PdfPCell(new Phrase("Report Date : ", rectem));
+            cell41.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell41.setColspan(1);
+            cell41.setBorder(Rectangle.NO_BORDER);
+            
+            String reportDate = "";
+            if (strDay.isEmpty())
+                reportDate = Month.getFullLetterMonth(strMon) + " " + strYear + "\n\n";
+             else 
+                reportDate = strDay + " " + Month.getFullLetterMonth(strMon) + " " + strYear + "\n\n";
+            
+            PdfPCell cell42 = new PdfPCell(new Phrase(reportDate, rectemja));
+            cell42.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell42.setColspan(3);
+            cell42.setBorder(Rectangle.NO_BORDER);
+
+            header.addCell(cell31);
+            header.addCell(cell41);
+            header.addCell(cell42);
+            
+            //----------------------------table body--------------------------------------->
+            
+            PdfPTable table = new PdfPTable(5);
+            table.setWidths(new float[]{1f, 1.5f, 4f, 2f, 2f});
+            table.setLockedWidth(true);
+            table.setTotalWidth(document.right() - document.left());
+            
+            PdfPCell cell61 = new PdfPCell(new Phrase("No.", rectem));
+            cell61.setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPCell cell62 = new PdfPCell(new Phrase("Item Code", rectem));
+            cell62.setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPCell cell63 = new PdfPCell(new Phrase("Item Name", rectem));
+            cell63.setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPCell cell64 = new PdfPCell(new Phrase("Total Quantity", rectem));
+            cell64.setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPCell cell65 = new PdfPCell(new Phrase("Total Sales", rectem));
+            cell65.setHorizontalAlignment(Element.ALIGN_CENTER);
+            
+            table.addCell(cell61);
+            table.addCell(cell62);
+            table.addCell(cell63);
+            table.addCell(cell64);
+            table.addCell(cell65);
+
+            double grandTotalSales = 0;
             int num = 1;
-            ArrayList<ArrayList<String>> saleData = Conn.getData(sql);
-            for(int i = 0; i < saleData.size(); i++){
+            //ArrayList<ArrayList<String>> saleData = Conn.getData(sql);
+            for(int i = 0; i < 10; i++){
                 String no = Integer.toString(num++);
 
-                String itemCode = saleData.get(i).get(0);
-                String itemName = saleData.get(i).get(1);
-                String totalQty = saleData.get(i).get(2);
-                String totalSales = saleData.get(i).get(3);
+//                String itemCode = saleData.get(i).get(0);
+//                String itemName = saleData.get(i).get(1);
+//                String totalQty = saleData.get(i).get(2);
+//                double totalSales = Double.parseDouble(saleData.get(i).get(3));
+                
+                String itemCode = "code";
+                String itemName = "item name";
+                String totalQty = "9999";
+                double totalSales = Double.parseDouble("1000");
 
                 PdfPCell cell71 = new PdfPCell(new Phrase(no, rectemja));
                 cell71.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell71.setBorder(Rectangle.NO_BORDER);
                 PdfPCell cell72 = new PdfPCell(new Phrase(itemCode, rectemja));
                 cell72.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell72.setBorder(Rectangle.NO_BORDER);
                 PdfPCell cell73 = new PdfPCell(new Phrase(itemName, rectemja));
                 cell73.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell73.setBorder(Rectangle.NO_BORDER);
                 PdfPCell cell74 = new PdfPCell(new Phrase(totalQty, rectemja));
                 cell74.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell74.setBorder(Rectangle.NO_BORDER);
-                PdfPCell cell75 = new PdfPCell(new Phrase(totalSales, rectemja));
+                PdfPCell cell75 = new PdfPCell(new Phrase(df.format(totalSales), rectemja));
                 cell75.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell75.setBorder(Rectangle.NO_BORDER);
-
+      
                 table.addCell(cell71);
                 table.addCell(cell72);
                 table.addCell(cell73);
                 table.addCell(cell74);
                 table.addCell(cell75);
+                
+                grandTotalSales += totalSales;
+                
+                if (i == 10-1){
+                    PdfPCell cell94 = new PdfPCell(new Phrase("Grand Total", rectem));
+                    cell94.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell94.setColspan(4);
+                    PdfPCell cell95 = new PdfPCell(new Phrase(df.format(grandTotalSales), rectem));
+                    cell95.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    
+                    table.addCell(cell94);
+                    table.addCell(cell95);
+                }
             }
             
             //----------------------------table footer--------------------------------------->
@@ -168,7 +242,7 @@ public class SalesReport extends HttpServlet {
             footer.setTotalWidth(document.right() - document.left());
             
             String message1 = "****End of Report****";
-            String message2 = "";
+            String message2 = "Generated on " + new SimpleDateFormat("dd MMM yyyy").format(date);
             PdfPCell cell160 = new PdfPCell(new Phrase(message1, rectemja));
             cell160.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell160.setBorder(Rectangle.TOP);
@@ -203,8 +277,8 @@ public class SalesReport extends HttpServlet {
         }
     }
     
-    private void generateYearSalesReport(HttpServletResponse response, String sql){
-        try {
+    private void generateYearSalesReport(HttpServletResponse response, String sql, String reportType){
+        try {   
             //Create and set PDF format
             Document document = new Document(PageSize.A4, 36, 36, 64, 36); 
             document.setMargins(40, 30, 50, 50); 
@@ -212,19 +286,146 @@ public class SalesReport extends HttpServlet {
             PdfWriter writer = PdfWriter.getInstance(document, baos);
             document.open();
         
-            PdfPTable table = new PdfPTable(6);
-            table.setWidths(new float[]{0.5f, 1.5f, 4f, 1.5f, 1.5f, 1.5f});
-            table.setLockedWidth(true);
-            table.setTotalWidth(document.right() - document.left());
-            
-            
-            ArrayList<ArrayList<String>> saleData = Conn.getData(sql);
-            
+            //----------------------------table header--------------------------------------->
             PdfPTable header = new PdfPTable(4);
             header.setWidths(new float[]{3f, 4f, 3.5f, 4f});
             header.setLockedWidth(true);
             header.setTotalWidth(document.right() - document.left());
-    
+
+            PdfPCell cellTitle = new PdfPCell(new Phrase(reportType + " Sales Report\n\n", recti));
+            cellTitle.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cellTitle.setBorder(Rectangle.NO_BORDER);
+            cellTitle.setColspan(4);
+            header.addCell(cellTitle);  
+            
+//            String sql_getHFAddr = 
+//                    "SELECT hfc_name, address1, address2, address3 "
+//                    + "FROM adm_health_facility "
+//                    + "WHERE hfc_cd = '"+ hfc_cd +"'";
+//            ArrayList<ArrayList<String>> hfData = Conn.getData(sql_getHFAddr);
+//            String hfName = hfData.get(0).get(0);
+//            String hfAddr1 = hfData.get(0).get(1);
+//            String hfAddr2 = hfData.get(0).get(2);
+//            String hfAddr3 = hfData.get(0).get(3); 
+//            String addr = 
+//                    " "+ hfName +", \n"
+//                    + " "+ hfAddr1 +" \n"
+//                    + " "+ hfAddr2 +","
+//                    + " "+ hfAddr3;
+
+            String addr = "test1\ntest2\ntest3\ntest4\n\n";
+            
+            PdfPCell cell31 = new PdfPCell(new Phrase(addr, rectemja));
+            cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell31.setColspan(4);
+            cell31.setBorder(Rectangle.NO_BORDER);
+            
+            PdfPCell cell41 = new PdfPCell(new Phrase("Report Year : ", rectem));
+            cell41.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell41.setColspan(1);
+            cell41.setBorder(Rectangle.NO_BORDER);
+            
+            PdfPCell cell42 = new PdfPCell(new Phrase(strYear + "\n\n", rectemja));
+            cell42.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell42.setColspan(3);
+            cell42.setBorder(Rectangle.NO_BORDER);
+
+            header.addCell(cell31);
+            header.addCell(cell41);
+            header.addCell(cell42);
+            
+            //----------------------------table body--------------------------------------->
+            
+            PdfPTable table = new PdfPTable(5);
+            table.setWidths(new float[]{1.5f, 1.5f, 3.5f, 2f, 2f});
+            table.setLockedWidth(true);
+            table.setTotalWidth(document.right() - document.left());
+            
+            PdfPCell cell61 = new PdfPCell(new Phrase("Month", rectem));
+            cell61.setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPCell cell62 = new PdfPCell(new Phrase("Item Code", rectem));
+            cell62.setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPCell cell63 = new PdfPCell(new Phrase("Item Name", rectem));
+            cell63.setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPCell cell64 = new PdfPCell(new Phrase("Total Quantity", rectem));
+            cell64.setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPCell cell65 = new PdfPCell(new Phrase("Total Sales", rectem));
+            cell65.setHorizontalAlignment(Element.ALIGN_CENTER);
+            
+            table.addCell(cell61);
+            table.addCell(cell62);
+            table.addCell(cell63);
+            table.addCell(cell64);
+            table.addCell(cell65);
+
+            double grandTotalSales = 0;
+            //ArrayList<ArrayList<String>> saleData = Conn.getData(sql);
+            for(int i = 0; i < 10; i++){
+                
+//                String month = saleData.get(i).get(0);
+//                String itemCode = saleData.get(i).get(1);
+//                String itemName = saleData.get(i).get(2);
+//                String totalQty = saleData.get(i).get(3);
+//                double totalSales = Double.parseDouble(saleData.get(i).get(4));
+                
+                String month = "August";
+                String itemCode = "code";
+                String itemName = "item name";
+                String totalQty = "9999";
+                double totalSales = Double.parseDouble("1000");
+
+                PdfPCell cell71 = new PdfPCell(new Phrase(month, rectemja));
+                cell71.setHorizontalAlignment(Element.ALIGN_CENTER);
+                PdfPCell cell72 = new PdfPCell(new Phrase(itemCode, rectemja));
+                cell72.setHorizontalAlignment(Element.ALIGN_LEFT);
+                PdfPCell cell73 = new PdfPCell(new Phrase(itemName, rectemja));
+                cell73.setHorizontalAlignment(Element.ALIGN_LEFT);
+                PdfPCell cell74 = new PdfPCell(new Phrase(totalQty, rectemja));
+                cell74.setHorizontalAlignment(Element.ALIGN_CENTER);
+                PdfPCell cell75 = new PdfPCell(new Phrase(df.format(totalSales), rectemja));
+                cell75.setHorizontalAlignment(Element.ALIGN_CENTER);
+      
+                table.addCell(cell71);
+                table.addCell(cell72);
+                table.addCell(cell73);
+                table.addCell(cell74);
+                table.addCell(cell75);
+                
+                grandTotalSales += totalSales;
+                
+                if (i == 10-1){
+                    PdfPCell cell94 = new PdfPCell(new Phrase("Grand Total", rectem));
+                    cell94.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell94.setColspan(4);
+                    PdfPCell cell95 = new PdfPCell(new Phrase(df.format(grandTotalSales), rectem));
+                    cell95.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    
+                    table.addCell(cell94);
+                    table.addCell(cell95);
+                }
+            }
+            
+            //----------------------------table footer--------------------------------------->
+            PdfPTable footer = new PdfPTable(1);
+            footer.setWidths(new float[]{10.5f});
+            footer.setLockedWidth(true);
+            footer.setTotalWidth(document.right() - document.left());
+            
+            String message1 = "****End of Report****";
+            String message2 = "Generated on " + new SimpleDateFormat("dd MMM yyyy").format(date);
+            PdfPCell cell160 = new PdfPCell(new Phrase(message1, rectemja));
+            cell160.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell160.setBorder(Rectangle.TOP);
+            PdfPCell cell170 = new PdfPCell(new Phrase(message2, rectemja));
+            cell170.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell170.setBorder(Rectangle.NO_BORDER);
+            
+            footer.addCell(cell160);
+            footer.addCell(cell170);
+            
+            document.add(header);
+            document.add(table);
+            document.add(footer);
             
             //Close the PDF for ready to send
             document.close();//close document
@@ -240,6 +441,7 @@ public class SalesReport extends HttpServlet {
             baos.writeTo(os);
             os.flush();
             os.close();
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
