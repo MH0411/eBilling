@@ -63,8 +63,8 @@ public class SalesReport extends HttpServlet {
         strDay = request.getParameter("day");
         strMon = request.getParameter("month");
         strYear = request.getParameter("year");
-//        userID = request.getSession().getAttribute("USER_ID").toString();
-//        hfc_cd = request.getSession().getAttribute("HEALTH_FACILITY_CODE").toString();
+        userID = request.getSession().getAttribute("USER_ID").toString();
+        hfc_cd = request.getSession().getAttribute("HEALTH_FACILITY_CODE").toString();
 
         String sql = "";
         if (!(strDay == null || strMon == null || strYear == null)){
@@ -121,22 +121,20 @@ public class SalesReport extends HttpServlet {
             cellTitle.setColspan(4);
             header.addCell(cellTitle);  
             
-//            String sql_getHFAddr = 
-//                    "SELECT hfc_name, address1, address2, address3 "
-//                    + "FROM adm_health_facility "
-//                    + "WHERE hfc_cd = '"+ hfc_cd +"'";
-//            ArrayList<ArrayList<String>> hfData = Conn.getData(sql_getHFAddr);
-//            String hfName = hfData.get(0).get(0);
-//            String hfAddr1 = hfData.get(0).get(1);
-//            String hfAddr2 = hfData.get(0).get(2);
-//            String hfAddr3 = hfData.get(0).get(3); 
-//            String addr = 
-//                    " "+ hfName +", \n"
-//                    + " "+ hfAddr1 +" \n"
-//                    + " "+ hfAddr2 +","
-//                    + " "+ hfAddr3;
-
-            String addr = "test1\ntest2\ntest3\ntest4\n\n";
+            String sql_getHFAddr = 
+                    "SELECT hfc_name, address1, address2, address3 "
+                    + "FROM adm_health_facility "
+                    + "WHERE hfc_cd = '"+ hfc_cd +"'";
+            ArrayList<ArrayList<String>> hfData = Conn.getData(sql_getHFAddr);
+            String hfName = hfData.get(0).get(0);
+            String hfAddr1 = hfData.get(0).get(1);
+            String hfAddr2 = hfData.get(0).get(2);
+            String hfAddr3 = hfData.get(0).get(3); 
+            String addr = 
+                    " "+ hfName +", \n"
+                    + " "+ hfAddr1 +" \n"
+                    + " "+ hfAddr2 +","
+                    + " "+ hfAddr3;
             
             PdfPCell cell31 = new PdfPCell(new Phrase(addr, rectemja));
             cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -192,20 +190,15 @@ public class SalesReport extends HttpServlet {
 
             double grandTotalSales = 0;
             int num = 1;
-            //ArrayList<ArrayList<String>> saleData = Conn.getData(sql);
+            ArrayList<ArrayList<String>> saleData = Conn.getData(sql);
             for(int i = 0; i < 10; i++){
                 String no = Integer.toString(num++);
 
-//                String itemCode = saleData.get(i).get(0);
-//                String itemName = saleData.get(i).get(1);
-//                String totalQty = saleData.get(i).get(2);
-//                double totalSales = Double.parseDouble(saleData.get(i).get(3));
-                
-                String itemCode = "code";
-                String itemName = "item name";
-                String totalQty = "9999";
-                double totalSales = Double.parseDouble("1000");
-
+                String itemCode = saleData.get(i).get(0);
+                String itemName = saleData.get(i).get(1);
+                String totalQty = saleData.get(i).get(2);
+                double totalSales = Double.parseDouble(saleData.get(i).get(3));
+               
                 PdfPCell cell71 = new PdfPCell(new Phrase(no, rectemja));
                 cell71.setHorizontalAlignment(Element.ALIGN_CENTER);
                 PdfPCell cell72 = new PdfPCell(new Phrase(itemCode, rectemja));
@@ -300,22 +293,20 @@ public class SalesReport extends HttpServlet {
             cellTitle.setColspan(4);
             header.addCell(cellTitle);  
             
-//            String sql_getHFAddr = 
-//                    "SELECT hfc_name, address1, address2, address3 "
-//                    + "FROM adm_health_facility "
-//                    + "WHERE hfc_cd = '"+ hfc_cd +"'";
-//            ArrayList<ArrayList<String>> hfData = Conn.getData(sql_getHFAddr);
-//            String hfName = hfData.get(0).get(0);
-//            String hfAddr1 = hfData.get(0).get(1);
-//            String hfAddr2 = hfData.get(0).get(2);
-//            String hfAddr3 = hfData.get(0).get(3); 
-//            String addr = 
-//                    " "+ hfName +", \n"
-//                    + " "+ hfAddr1 +" \n"
-//                    + " "+ hfAddr2 +","
-//                    + " "+ hfAddr3;
-
-            String addr = "test1\ntest2\ntest3\ntest4\n\n";
+            String sql_getHFAddr = 
+                    "SELECT hfc_name, address1, address2, address3 "
+                    + "FROM adm_health_facility "
+                    + "WHERE hfc_cd = '"+ hfc_cd +"'";
+            ArrayList<ArrayList<String>> hfData = Conn.getData(sql_getHFAddr);
+            String hfName = hfData.get(0).get(0);
+            String hfAddr1 = hfData.get(0).get(1);
+            String hfAddr2 = hfData.get(0).get(2);
+            String hfAddr3 = hfData.get(0).get(3); 
+            String addr = 
+                    " "+ hfName +", \n"
+                    + " "+ hfAddr1 +" \n"
+                    + " "+ hfAddr2 +","
+                    + " "+ hfAddr3;
             
             PdfPCell cell31 = new PdfPCell(new Phrase(addr, rectemja));
             cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -361,21 +352,15 @@ public class SalesReport extends HttpServlet {
             table.addCell(cell65);
 
             double grandTotalSales = 0;
-            //ArrayList<ArrayList<String>> saleData = Conn.getData(sql);
+            ArrayList<ArrayList<String>> saleData = Conn.getData(sql);
             for(int i = 0; i < 10; i++){
                 
-//                String month = saleData.get(i).get(0);
-//                String itemCode = saleData.get(i).get(1);
-//                String itemName = saleData.get(i).get(2);
-//                String totalQty = saleData.get(i).get(3);
-//                double totalSales = Double.parseDouble(saleData.get(i).get(4));
+                String month = saleData.get(i).get(0);
+                String itemCode = saleData.get(i).get(1);
+                String itemName = saleData.get(i).get(2);
+                String totalQty = saleData.get(i).get(3);
+                double totalSales = Double.parseDouble(saleData.get(i).get(4));
                 
-                String month = "August";
-                String itemCode = "code";
-                String itemName = "item name";
-                String totalQty = "9999";
-                double totalSales = Double.parseDouble("1000");
-
                 PdfPCell cell71 = new PdfPCell(new Phrase(month, rectemja));
                 cell71.setHorizontalAlignment(Element.ALIGN_CENTER);
                 PdfPCell cell72 = new PdfPCell(new Phrase(itemCode, rectemja));
