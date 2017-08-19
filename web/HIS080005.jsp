@@ -1,16 +1,17 @@
-<%-- 
+<%--
     Document   : report
     Created on : Dec 24, 2016, 6:17:44 PM
     Author     : Mike Ho
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@include file="../Entrance/validateSession.jsp" %>
-<%@include file="validateModuleAccess.jsp" %>
+<%--<%@include file="../Entrance/validateSession.jsp" %>
+<%@include file="validateModuleAccess.jsp" %>--%>
 <!DOCTYPE html>
 <html>
     
     <%session.setAttribute("USER_ID", "DR001");%>
+    <%session.setAttribute("HEALTH_FACILITY_CODE", "04010102");%>
     <%@include file = "includes/header.jsp" %>
     <body onload="yearList()">
         <div class="container-fluid">

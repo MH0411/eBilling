@@ -78,7 +78,7 @@ public class Conn
         RMIConnector rmic = new RMIConnector();
 
 //        String host_db = Config.url_server;
-        String host_server = "10.73.32.200";
+        String host_server = "10.73.32.201";
         int host_port = 1098;
         try {
             host_port = 1098;

@@ -18,8 +18,6 @@ import dbConn1.Conn;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,35 +63,35 @@ public class SalesReport extends HttpServlet {
         strYear = request.getParameter("year");
         userID = request.getSession().getAttribute("USER_ID").toString();
         hfc_cd = request.getSession().getAttribute("HEALTH_FACILITY_CODE").toString();
-
+        
         String sql = "";
         if (!(strDay == null || strMon == null || strYear == null)){
-            System.out.println(strDay.isEmpty());
             sql = "SELECT cd.item_cd, cd.item_desc, SUM(cd.quantity), SUM(cd.item_amt) "
                     + "FROM far_customer_dtl cd, far_customer_hdr ch "
                     + "WHERE cd.bill_no = ch.bill_no "
-                    + "AND DATE(cl.txn_date) = '" + strYear + "-" + strMon + "-" + strDay + "' "
-                    //+ "AND ch.hfc_cd = '" + hfc_cd + "' "
+                    + "AND DATE(cd.txn_date) = '" + strYear + "-" + strMon + "-" + strDay + "' "
+                    + "AND ch.hfc_cd = '" + hfc_cd + "' "
                     + "GROUP BY cd.item_cd "
                     + "ORDER BY SUM(cd.quantity) DESC";
             generateDayOrMonthSalesReport(response, sql, "Daily");
             
         } else if (!(strMon == null || strYear == null)){
-            sql = "SELECT cd.item_cd, cd.item_desc, cd.SUM(quantity), SUM(cd.item_amt) "
+            sql = "SELECT cd.item_cd, cd.item_desc, SUM(cd.quantity), SUM(cd.item_amt) "
                     + "FROM far_customer_dtl cd, far_customer_hdr ch " 
                     + "WHERE cd.bill_no = ch.bill_no "
                     + "AND MONTH(cd.txn_date) = '" + strMon + "' "
-                    //+ "AND ch.hfc_cd = '" + hfc_cd + "' "
+                    + "AND YEAR(cd.txn_date) = '" + strYear + "' "
+                    + "AND ch.hfc_cd = '" + hfc_cd + "' "
                     + "GROUP BY cd.item_cd " 
                     + "ORDER BY SUM(cd.quantity) DESC";
             generateDayOrMonthSalesReport(response, sql, "Monthly");
             
         } else if (!(strYear == null)){
             sql = "SELECT MONTHNAME(cd.txn_date), cd.item_cd, cd.item_desc, SUM(cd.quantity), SUM(cd.item_amt) "
-                    + "FROM cd.far_customer_dtl, far_customer_hdr ch "
+                    + "FROM far_customer_dtl cd, far_customer_hdr ch "
                     + "WHERE cd.bill_no = ch.bill_no "
                     + "AND YEAR(cd.txn_date) = '" + strYear + "' "
-                    //+ "AND ch.hfc_cd = '" + hfc_cd + "' "
+                    + "AND ch.hfc_cd = '" + hfc_cd + "' "
                     + "GROUP BY cd.item_cd "
                     + "ORDER BY cd.txn_date, SUM(cd.quantity) DESC";
             generateYearSalesReport(response, sql, "Yearly");
@@ -133,8 +131,8 @@ public class SalesReport extends HttpServlet {
             String addr = 
                     " "+ hfName +", \n"
                     + " "+ hfAddr1 +" \n"
-                    + " "+ hfAddr2 +","
-                    + " "+ hfAddr3;
+                    + " "+ hfAddr2 +",\n"
+                    + " "+ hfAddr3 +"\n\n";
             
             PdfPCell cell31 = new PdfPCell(new Phrase(addr, rectemja));
             cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -191,7 +189,7 @@ public class SalesReport extends HttpServlet {
             double grandTotalSales = 0;
             int num = 1;
             ArrayList<ArrayList<String>> saleData = Conn.getData(sql);
-            for(int i = 0; i < 10; i++){
+            for(int i = 0; i < saleData.size(); i++){
                 String no = Integer.toString(num++);
 
                 String itemCode = saleData.get(i).get(0);
@@ -218,7 +216,7 @@ public class SalesReport extends HttpServlet {
                 
                 grandTotalSales += totalSales;
                 
-                if (i == 10-1){
+                if (i == saleData.size()-1){
                     PdfPCell cell94 = new PdfPCell(new Phrase("Grand Total", rectem));
                     cell94.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell94.setColspan(4);
@@ -305,8 +303,8 @@ public class SalesReport extends HttpServlet {
             String addr = 
                     " "+ hfName +", \n"
                     + " "+ hfAddr1 +" \n"
-                    + " "+ hfAddr2 +","
-                    + " "+ hfAddr3;
+                    + " "+ hfAddr2 +", \n"
+                    + " "+ hfAddr3 +"\n\n";
             
             PdfPCell cell31 = new PdfPCell(new Phrase(addr, rectemja));
             cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -353,7 +351,7 @@ public class SalesReport extends HttpServlet {
 
             double grandTotalSales = 0;
             ArrayList<ArrayList<String>> saleData = Conn.getData(sql);
-            for(int i = 0; i < 10; i++){
+            for(int i = 0; i < saleData.size(); i++){
                 
                 String month = saleData.get(i).get(0);
                 String itemCode = saleData.get(i).get(1);
@@ -380,7 +378,7 @@ public class SalesReport extends HttpServlet {
                 
                 grandTotalSales += totalSales;
                 
-                if (i == 10-1){
+                if (i == saleData.size()-1){
                     PdfPCell cell94 = new PdfPCell(new Phrase("Grand Total", rectem));
                     cell94.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell94.setColspan(4);
